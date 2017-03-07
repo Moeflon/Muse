@@ -1,3 +1,6 @@
+/*TODO: set AD0 to 0 (logic low)*/
+/*TODO PRR0 register bekijken, MSB bepaalt of TWI mogelijk is of niet*/
+
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
@@ -16,10 +19,10 @@ int main(void) {
   clearLCD();
 
   // Start on address
-  twi_start(0b11010000 | TWI_READ);
-
+  twi_start(SLV_I2C_ADDR | TWI_READ); //moet TWI_WRITE zijn volgens mij, Slave address moet gegeven
+                                      // worden met een WRTIE, register address met READ
   // Write to this register
-  twi_write(0x3B);
+  twi_write(0x3B);          //3B zijn de hoogste 8bits van het ACCEL_XOUT register, denk dat we hier twi_read moeten doen
 
   // Receive data
   uint8_t data = twi_read_nack();

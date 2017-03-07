@@ -4,6 +4,7 @@
 #define STATUSMASK 0xF8
 #define TWI_READ 0x01
 #define TWI_WRITE 0x00
+#define SLV_I2C_ADDR 0b11010000 //LSB indicates Read/Write; 2nd LSB indicates AD0 set to 0
 
 /**
  * @brief sends a START to I2C device on address
