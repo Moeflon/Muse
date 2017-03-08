@@ -11,6 +11,8 @@
 
 #include <twiProtocol.h>
 
+#define SLV_I2C_ADDR 0b11010000 //LSB indicates Read/Write; 2nd LSB indicates AD0 set to 0
+
 int main(void) {
   DDRA = 0xFF; // Set all PORTA pins as output
   PORTA = 0; // Turn all LEDs off
