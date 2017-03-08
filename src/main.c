@@ -1,6 +1,3 @@
-/*TODO: set AD0 to 0 (logic low)*/
-/*TODO PRR0 register bekijken, MSB bepaalt of TWI mogelijk is of niet*/
-
 #include <avr/interrupt.h>
 #include <avr/io.h>
 
@@ -11,34 +8,20 @@
 
 #include <twiProtocol.h>
 
-#define SLV_I2C_ADDR 0b11010000 //LSB indicates Read/Write; 2nd LSB indicates AD0 set to 0
+#define SLV_I2C_ADDR 0b11010000 // LSB indicates Read/Write; 2nd LSB indicates AD0 set to 0
+#define PWR_MGMT_1 0x6B
 
 int main(void) {
   DDRA = 0xFF; // Set all PORTA pins as output
   PORTA = 0; // Turn all LEDs off
+  PRR0 &= ~_BV(PRTWI); // Make sure TWI is enabled in power
 
   initLCD();
   clearLCD();
 
-  // Start on address
-  twi_start(SLV_I2C_ADDR | TWI_READ); //moet TWI_WRITE zijn volgens mij, Slave address moet gegeven
-                                      // worden met een WRTIE, register address met READ
-  // Write to this register
-  twi_write(0x3B);          //3B zijn de hoogste 8bits van het ACCEL_XOUT register, denk dat we hier twi_read moeten doen
+  // Set power mode
+  twi_write_reg(SLV_I2C_ADDR, PWR_MGMT_1, 0);
 
-  // Receive data
-  uint8_t data = twi_read_nack();
-
-  // Send stop
-  twi_stop();
-
-  /**
-   * TODO:
-   * - duplicate transmit and receive (register) function
-   * - https://github.com/g4lvanix/I2C-master-lib/blob/master/i2c_master.c
-   */
-}
-
-void error(void) {
-  // Crash
+  uint8_t data = twi_read_reg(SLV_I2C_ADDR, 0x3C);
+  printIntToLCD(data, 0, 0);
 }
