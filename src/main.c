@@ -30,18 +30,24 @@ int main(void) {
   // Set power mode
   WRITE_REG(PWR_MGMT_1, 0);
 
-  Acceleration accel = imu_get_acceleration();
+  while(1) {
+    clearLCD();
 
-  printCharToLCD('X', 0, 0);
-  printIntToLCD(accel.x, 0, 2); //Print waarden van -16384..16384 (-2g..2g)
+    Vector accel = imu_get_acceleration();
 
-  printCharToLCD('Y', 1, 0);
-  printIntToLCD(accel.y, 1, 2);
+    printCharToLCD('X', 0, 0);
+    printIntToLCD(accel.x, 0, 2); //Print waarden van -16384..16384 (-2g..2g)
 
-  printCharToLCD('Z', 1, 8);
-  printIntToLCD(accel.z, 1, 10);
+    printCharToLCD('Y', 1, 0);
+    printIntToLCD(accel.y, 1, 2);
 
-  double beta = atan( ((double)accel.x) / ((double)accel.z) );
-  printCharToLCD('B', 0, 8);
-  printIntToLCD((int) (beta*180/PI), 0, 10);
+    printCharToLCD('Z', 1, 8);
+    printIntToLCD(accel.z, 1, 10);
+
+    double beta = atan( ((double)accel.x) / ((double)accel.z) );
+    printCharToLCD('B', 0, 8);
+    printIntToLCD((int) (beta*180/PI), 0, 10);
+
+    _delay_ms(200);
+  }
 }

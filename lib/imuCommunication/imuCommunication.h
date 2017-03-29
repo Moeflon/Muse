@@ -10,17 +10,11 @@
 #define WRITE_REG(r, d) twi_write_reg(SLV_I2C_ADDR, r, d)
 #define READ_REG(r) twi_read_reg(SLV_I2C_ADDR, r)
 
-typedef struct Acceleration {
+typedef struct Vector {
   int16_t x;
   int16_t y;
   int16_t z;
-} Acceleration;
-
-typedef struct Angular {
-  int16_t x;
-  int16_t y;
-  int16_t z;
-} Angular;
+} Vector;
 
 /**
  * @brief parses high and low bytes to 16-bit int
@@ -51,7 +45,7 @@ int16_t imu_get_z_acceleration();
 /**
  * @brief gets the acceleration in all directions
  */
-Acceleration imu_get_acceleration();
+Vector imu_get_acceleration();
 
 /**
  * @brief gets the x angular velocity
@@ -74,5 +68,5 @@ int16_t imu_get_z_angular();
 /**
  * @brief gets the acceleration in all directions
  */
-Angular imu_get_angular();
+Vector imu_get_angular();
 #endif

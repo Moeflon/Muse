@@ -27,8 +27,8 @@ int16_t imu_get_z_acceleration() {
   return imu_parse(READ_REG(ACCEL_ZOUT_H), READ_REG(ACCEL_ZOUT_L));
 }
 
-Acceleration imu_get_acceleration() {
-  Acceleration accel = { imu_get_x_acceleration(), imu_get_y_acceleration(), imu_get_z_acceleration() };
+Vector imu_get_acceleration() {
+  Vector accel = { imu_get_x_acceleration(), imu_get_y_acceleration(), imu_get_z_acceleration() };
   return accel;
 }
 
@@ -44,7 +44,7 @@ int16_t imu_get_z_angular() {
   return imu_parse(READ_REG(GYRO_ZOUT_H), READ_REG(GYRO_ZOUT_L));
 }
 
-Angular imu_get_angular() {
-  Angular angular = { imu_get_x_angular(), imu_get_y_angular(), imu_get_z_angular() };
+Vector imu_get_angular() {
+  Vector angular = { imu_get_x_angular(), imu_get_y_angular(), imu_get_z_angular() };
   return angular;
 }
