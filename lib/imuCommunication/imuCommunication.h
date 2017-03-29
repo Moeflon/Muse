@@ -5,16 +5,11 @@
 #define IMU_COMMUNICATION_H
 
 #include <twiProtocol.h>
+#include <vectorMaths.h>
 #include "imu_registers.h"
 
 #define WRITE_REG(r, d) twi_write_reg(SLV_I2C_ADDR, r, d)
 #define READ_REG(r) twi_read_reg(SLV_I2C_ADDR, r)
-
-typedef struct Vector {
-  int16_t x;
-  int16_t y;
-  int16_t z;
-} Vector;
 
 /**
  * @brief parses high and low bytes to 16-bit int

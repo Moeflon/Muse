@@ -6,6 +6,7 @@
 #include <avr/io.h>
 #include <util/twi.h>
 #include <util/delay.h>
+#include <physicsModel.h>
 
 #define PI 3.1415
 
@@ -29,25 +30,21 @@ int main(void) {
 
   // Set power mode
   WRITE_REG(PWR_MGMT_1, 0);
-
+  physicsModel* model = create_model();
+  calibrate_gyro(model);
   while(1) {
-    clearLCD();
-
-    Vector accel = imu_get_acceleration();
-
+    update_model_orientation(model);
     printCharToLCD('X', 0, 0);
-    printIntToLCD(accel.x, 0, 2); //Print waarden van -16384..16384 (-2g..2g)
+    printIntToLCD(model->orientation->x, 0, 2); //Print waarden van -16384..16384 (-2g..2g)
 
     printCharToLCD('Y', 1, 0);
-    printIntToLCD(accel.y, 1, 2);
+    printIntToLCD(model->orientation->y, 1, 2);
 
     printCharToLCD('Z', 1, 8);
-    printIntToLCD(accel.z, 1, 10);
+    printIntToLCD(model->orientation->z, 1, 10);
 
-    double beta = atan( ((double)accel.x) / ((double)accel.z) );
-    printCharToLCD('B', 0, 8);
-    printIntToLCD((int) (beta*180/PI), 0, 10);
+    _delay_ms(400);
+    clearLCD();
 
-    _delay_ms(200);
   }
 }

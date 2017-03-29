@@ -1,3 +1,10 @@
+/*
+ * twiProtocol.h
+ */
+
+#ifndef TWI_PROTOCOL_H_
+#define TWI_PROTOCOL_H_
+
 #include <avr/io.h>
 #include <util/twi.h>
 
@@ -57,3 +64,4 @@ uint8_t twi_read_reg(uint8_t slav_addr, uint8_t reg_add);
  *         4: error whilst writing data
  */
 uint8_t twi_write_reg(uint8_t slav_addr, uint8_t reg_addr, uint8_t data);
+#endif
