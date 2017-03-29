@@ -1,7 +1,3 @@
-/**
- * imuCommunication.c
- */
-
 #include "imuCommunication.h"
 
 int16_t imu_parse(uint8_t high, uint8_t low) {

@@ -1,5 +1,6 @@
-/*
- * vectorMaths.h
+/**
+ * @file vectorMaths.h
+ * @brief Simple vector struct and vector operation definitions
  */
 
 #ifndef VECTOR_MATHS_H_
@@ -7,40 +8,43 @@
 
 #include <stdint.h>
 
+/**
+ * @brief A simple three-dimensional vector
+ */
 typedef struct Vector {
-  int16_t x;
-  int16_t y;
-  int16_t z;
+  int16_t x; /**> x component */
+  int16_t y; /**> y component */
+  int16_t z; /**> z component */
 } Vector;
 
 /**
  * @brief adds operand Vectors and stores it in supplied pointer
- * @param operand 1
- * @param operand 2
- * @param destination pointer
+ * @param a operand 1
+ * @param b operand 2
+ * @param [out] dest destination pointer
  */
-void add_vector(Vector*, Vector*, Vector*);
+void add_vector(Vector* a, Vector* b, Vector* dest);
 
 /**
  * @brief subtracts operand Vectors left to right and stores it in supplied pointer
- * @param operand 1
- * @param operand 2
- * @param destination pointer
+ * @param a operand 1
+ * @param b operand 2
+ * @param [out] dest destination pointer
  */
-void sub_vector(Vector*, Vector*, Vector*);
+void sub_vector(Vector* a, Vector* b, Vector* dest);
 
 /**
  * @brief devides vector by a given power of 2
- * @param power of two
- * @param pointer to vector we want to devide
- * @param pointer to destionation vector
+ * @param pow power of two
+ * @param a pointer to vector we want to devide
+ * @param [out] dest pointer to destionation vector
  */
-void div_pow_two_vector(int, Vector*, Vector*);
+void div_pow_two_vector(int pow, Vector* a, Vector* dest);
 
 /**
  * @brief calculates normal
  * @return norm
  */
-uint16_t vector_norm(Vector*);
+uint16_t vector_norm(Vector* a);
 
 #endif

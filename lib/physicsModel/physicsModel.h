@@ -1,5 +1,6 @@
-/*
- * physicsModel.h
+/**
+ * @file physicsModel.h
+ * @brief Declares functions to calibrate and interpret accelerometer data
  */
 
 #ifndef PHYSICS_MODEL_H_
@@ -11,11 +12,14 @@
 #define CALIBRATION_ITERATIONS 8192
 #define AVERAGING_BUFFER_SIZE 13 /* must be >= lg of iterations but lg is expensive! */
 
+/**
+ * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions
+ */
 typedef struct physicsModel {
-  Vector* orientation;
-  Vector* position;
-  Vector* accel_ref;
-  Vector* gyro_ref;
+  Vector* orientation; /**> pointer to orientation vector */
+  Vector* position; /**> pointer to position vector */
+  Vector* accel_ref; /**> pointer to accelerometer reference vector */
+  Vector* gyro_ref; /**> pointer to gyroscope reference vector */
 } physicsModel;
 
 /**
@@ -26,46 +30,46 @@ physicsModel* create_model(void);
 
 /**
  * @brief frees model memory
- * @param pointer to model
+ * @param model pointer to model
  */
-void destroy_model(physicsModel*);
+void destroy_model(physicsModel* model);
 
 /**
  * @brief calculates references for accelerometer measurements
- * @param pointer to model to calibrate
+ * @param model pointer to model to calibrate
  */
-void calibrate_accel(physicsModel*);
+void calibrate_accel(physicsModel* model);
 
 /**
  * @brief calculates references for gyroscope measurements
- * @param pointer to model to calibrate
+ * @param model pointer to model to calibrate
  */
-void calibrate_gyro(physicsModel*);
+void calibrate_gyro(physicsModel* model);
 
 /**
  * @brief normalizes measurement Vector according to reference
- * @param pointer to Vector containing measurement
- * @param pointer to Vector containing reference
+ * @param accel pointer to Vector containing measurement
+ * @param ref pointer to Vector containing reference
  */
-void normalize_accel(Vector*, Vector*);
+void normalize_accel(Vector* accel, Vector* ref);
 
 /**
  * @brief normalizes measurement Vector according to reference
- * @param pointer to Vector containing measurement
- * @param pointer to Vector containing reference
+ * @param angular pointer to Vector containing measurement
+ * @param ref pointer to Vector containing reference
  */
-void normalize_angular(Vector*, Vector*);
+void normalize_angular(Vector* angular, Vector* ref);
 
 /**
  * @brief adjusts orientation vector according to new measurement
- * @param pointer to model Vector
+ * @param model pointer to model Vector
  */
-void update_model_orientation(physicsModel*);
+void update_model_orientation(physicsModel* model);
 
 /**
  * @brief adjusts position vector according to new measurement
- * @param pointer to model Vector
+ * @param model pointer to model Vector
  */
-void update_model_position(physicsModel*);
+void update_model_position(physicsModel* model);
 
 #endif

@@ -9,8 +9,8 @@
 
 physicsModel* create_model() {
   physicsModel* model = malloc(sizeof(physicsModel));
-  model->orientation = calloc(1, sizeof(Vector));
-  model->position = calloc(1, sizeof(Vector));
+  model->orientation = calloc(1, sizeof(Vector)); /* zero-initialize */
+  model->position = calloc(1, sizeof(Vector)); /* zero-initialize */
   model->accel_ref = malloc(sizeof(Vector));
   model->gyro_ref = malloc(sizeof(Vector));
 
@@ -20,6 +20,7 @@ physicsModel* create_model() {
 }
 
 void destroy_model(physicsModel* model) {
+  /* Free all memory allocated by create_model */
   free(model->orientation);
   free(model->position);
   free(model->accel_ref);
@@ -28,20 +29,20 @@ void destroy_model(physicsModel* model) {
 }
 
 /* Recursive function for calibration functions */
-void merge_averages(Vector* averages, uint8_t* degrees, uint8_t* tail) {
+void merge_averages(Vector* averages, uint8_t* degrees, int8_t* tail) {
   if(*tail == 0) return;
   if(degrees[*tail - 1] == degrees[*tail]) {
     /* Adds the last two vectors together and stores it in the second last location */
-    add_vector(&(averages[*tail]), &(averages[*tail - 1]), &(averages[*tail - 1]));
+    add_vector(averages + *tail, averages + *tail - 1, averages + *tail - 1);
 
     /* Tail shortens */
     (*tail)--;
 
     /* The "merge-degree" is now one higher */
-    (degrees[*tail])++;
+    degrees[*tail]++;
 
     /* Devide tail by two */
-    div_pow_two_vector(1, &(averages[*tail]), &(averages[*tail]));
+    div_pow_two_vector(1, averages + *tail, averages + *tail);
 
     /* Can we merge more? */
     merge_averages(averages, degrees, tail);
@@ -57,7 +58,7 @@ void calibrate_gyro(physicsModel* model) {
   Vector averages[AVERAGING_BUFFER_SIZE];
   uint8_t degrees[AVERAGING_BUFFER_SIZE];
 
-  uint8_t tail = -1;
+  int8_t tail = -1; /* needs to be -1 to have right tail index at call off merge_averages */
   for(int i = 0; i < CALIBRATION_ITERATIONS; i++) {
     tail++;
     averages[tail] = imu_get_angular();
@@ -69,7 +70,7 @@ void calibrate_gyro(physicsModel* model) {
    for efficiency we don't average these anymore and just
    take the biggest one at the start
   */
-  memcpy(model->gyro_ref, &(averages[0]), sizeof(Vector));
+  memcpy(model->gyro_ref, averages, sizeof(Vector));
 }
 
 void normalize_accel(Vector* accel, Vector* ref) {
