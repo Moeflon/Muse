@@ -12,8 +12,8 @@
 #include "imu_registers.h"
 
 /* Macros so we don't always have to supply our slave address */
-#define WRITE_REG(r, d) twi_write_reg(SLV_I2C_ADDR, r, d)
-#define READ_REG(r) twi_read_reg(SLV_I2C_ADDR, r)
+#define WRITE_REG(r, d) twi_write_reg(SLV_TWI_ADDR, r, d)
+#define READ_REG(r) twi_read_reg(SLV_TWI_ADDR, r)
 
 /**
  * @brief parses high and low bytes to 16-bit int

@@ -9,22 +9,11 @@
 
 physicsModel* create_model() {
   physicsModel* model = malloc(sizeof(physicsModel));
-  model->orientation = calloc(1, sizeof(Vector)); /* zero-initialize */
-  model->position = calloc(1, sizeof(Vector)); /* zero-initialize */
-  model->accel_ref = malloc(sizeof(Vector));
-  model->gyro_ref = malloc(sizeof(Vector));
-
-  /* TODO: Check if allocation worked
-     implement error library to show errors */
   return model;
 }
 
 void destroy_model(physicsModel* model) {
   /* Free all memory allocated by create_model */
-  free(model->orientation);
-  free(model->position);
-  free(model->accel_ref);
-  free(model->gyro_ref);
   free(model);
 }
 
@@ -70,19 +59,55 @@ void calibrate_gyro(physicsModel* model) {
    for efficiency we don't average these anymore and just
    take the biggest one at the start
   */
-  memcpy(model->gyro_ref, averages, sizeof(Vector));
+  memcpy(&model->gyro_ref, averages, sizeof(Vector));
+}
+
+void init_ddi_buffer(ddiBuffer* buffer, Vector* init_values) {
+    memcpy(buffer->sample_stream, init_values, sizeof(buffer->sample_stream));
+}
+
+void ddi(Vector* new_sample, ddiBuffer* buffer) {
+  /* Shift stream values one to the left */
+  memcpy(buffer->sample_stream, buffer->sample_stream + 1, (SAMPLE_STREAM_SIZE - 1) * sizeof(buffer->sample_stream[0]));
+
+  /* Last stream value is new sample */
+  buffer->sample_stream[SAMPLE_STREAM_SIZE - 1] = *new_sample;
+
+  /*
+   * Caluclate second derivative and save it in first array slot as we will not need this one in the future
+   * We assume
+   * @see http://web.stanford.edu/~fringer/teaching/numerical_methods_02/handouts/lecture4.pdf Formula (30)
+   */
+  /* Add last value to first one */
+  add_vector(&buffer->sample_stream[0], &buffer->sample_stream[SAMPLE_STREAM_SIZE - 1], &buffer->sample_stream[0]);
+
+  /* Subtract middle vector from first one twice */
+  sub_vector(&buffer->sample_stream[0], &buffer->sample_stream[1], &buffer->sample_stream[0]);
+  sub_vector(&buffer->sample_stream[0], &buffer->sample_stream[1], &buffer->sample_stream[0]);
+
+  /* Add second derivative to I1 and save in I1 */
+  add_vector(&buffer->sample_stream[0], &buffer->I1, &buffer->I1);
+
+  /* Add I1 to I2 and save in I2 */
+  add_vector(&buffer->I1, &buffer->I2, &buffer->I2);
+
+  /* adjusted sample = I2 */
+  new_sample = &buffer->I2;
 }
 
 void normalize_accel(Vector* accel, Vector* ref) {
 
 }
 
-void normalize_angular(Vector* angular, Vector* ref) {
-  sub_vector(angular, ref, angular);
+void normalize_angular(Vector* angular, physicsModel* model) {
+  sub_vector(angular, &model->gyro_ref, angular);
+  ddi(angular, &model->gyro_ddi);
 }
 
 void update_model_orientation(physicsModel* model) {
   Vector angular = imu_get_angular();
-  normalize_angular(&angular, model->gyro_ref);
-  add_vector(&angular, model->orientation, model->orientation);
+
+  normalize_angular(&angular, model);
+
+  add_vector(&angular, &model->orientation, &model->orientation);
 }

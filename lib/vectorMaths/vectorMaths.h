@@ -39,7 +39,15 @@ void sub_vector(Vector* a, Vector* b, Vector* dest);
  * @param a pointer to vector we want to devide
  * @param [out] dest pointer to destionation vector
  */
-void div_pow_two_vector(int pow, Vector* a, Vector* dest);
+void div_pow_two_vector(uint8_t pow, Vector* a, Vector* dest);
+
+/**
+ * @brief multiplies vector by a given power of 2
+ * @param pow power of two
+ * @param a pointer to vector we want to devide
+ * @param [out] dest pointer to destionation vector
+ */
+void mul_pow_two_vector(uint8_t pow, Vector* a, Vector* dest);
 
 /**
  * @brief calculates normal

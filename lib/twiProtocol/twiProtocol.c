@@ -1,5 +1,7 @@
 #include "twiProtocol.h"
-
+/*
+TODO: change register changing functions to macros
+*/
 uint8_t twi_start(uint8_t address) {
   /* Transmit START */
   TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);
@@ -94,7 +96,7 @@ uint8_t twi_read_reg(uint8_t slav_addr, uint8_t reg_addr) {
 
 uint8_t twi_write_reg(uint8_t slav_addr, uint8_t reg_addr, uint8_t data) {
   uint8_t status;
-  
+
   /* Send start condition with a write bit */
   status = twi_start(slav_addr | TWI_WRITE);
   if(status > 0) { return status; }

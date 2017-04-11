@@ -1,4 +1,4 @@
-#define SLV_I2C_ADDR 0b11010000 // LSB indicates Read/Write; 2nd LSB indicates AD0 set to
+#define SLV_TWI_ADDR 0b11010000 // LSB indicates Read/Write; 2nd LSB indicates AD0 set to
 
 #define PWR_MGMT_1 0x6B
 #define ACCEL_XOUT_H 0x3B
