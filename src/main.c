@@ -31,6 +31,13 @@ int main(void) {
   imu_init();
   physicsModel* model = create_model();
   calibrate_gyro(model);
+
+  Vector values[3];
+  values[0] = imu_get_angular();
+  values[1] = imu_get_angular();
+  values[2] = imu_get_angular();
+  init_ddi_buffer(&model->gyro_ddi, values);
+
   while(1) {
     update_model_orientation(model);
     printCharToLCD('X', 0, 0);
