@@ -43,15 +43,15 @@ void calibrate_gyro(physicsModel* model) {
    To save memory, we will calculate this average on the fly by averaging values added to an array of size lg(CALIBRATION_ITERATIONS)
    and averaging the two last values if they are of the same "degree". Every time an average is calculated, this value's degree increases.
 
-   Example:
+   Example: (numbers in visualized array are the degrees)
    --------
-   iteration 1: | 1 | <- first value is added
-   iteration 2: | 1 | 1 | <- new value
-                | 2 | <- merged
-   iteration 3: | 2 | 1 | <- new value
-   iteration 4: | 2 | 1 | 1 | <- new value
-                | 2 | 2 | <- merged
-                | 3 | <- merged again (recursively)
+   iteration 1: | 0 | <- first value is added
+   iteration 2: | 0 | 0 | <- new value
+                | 1 | <- merged
+   iteration 3: | 1 | 0 | <- new value
+   iteration 4: | 1 | 0 | 0 | <- new value
+                | 1 | 1 | <- merged
+                | 2 | <- merged again (recursively)
   */
   Vector averages[AVERAGING_BUFFER_SIZE];
   uint8_t degrees[AVERAGING_BUFFER_SIZE];
