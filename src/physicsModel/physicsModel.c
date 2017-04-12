@@ -37,10 +37,26 @@ void calibrate_accel(physicsModel* model) {
 }
 
 void calibrate_gyro(physicsModel* model) {
+  /*
+   As a first attempt of filtering our raw data we will try to figure out just how much the sensor is off.
+   Whilst the device is stationary on a table we will get a set amount of samples and average those to get a rough estimate of the error.
+   To save memory, we will calculate this average on the fly by averaging values added to an array of size lg(CALIBRATION_ITERATIONS)
+   and averaging the two last values if they are of the same "degree". Every time an average is calculated, this value's degree increases.
+
+   Example:
+   --------
+   iteration 1: | 1 | <- first value is added
+   iteration 2: | 1 | 1 | <- new value
+                | 2 | <- merged
+   iteration 3: | 2 | 1 | <- new value
+   iteration 4: | 2 | 1 | 1 | <- new value
+                | 2 | 2 | <- merged
+                | 3 | <- merged again (recursively)
+  */
   Vector averages[AVERAGING_BUFFER_SIZE];
   uint8_t degrees[AVERAGING_BUFFER_SIZE];
 
-  int8_t tail = -1; /* needs to be -1 to have right tail index at call off merge_averages */
+  int8_t tail = -1; /* needs to be -1 to have 0 tail index at first call off merge_averages */
   for(int i = 0; i < CALIBRATION_ITERATIONS; i++) {
     tail++;
     averages[tail] = imu_get_angular();
@@ -50,7 +66,7 @@ void calibrate_gyro(physicsModel* model) {
   /*
    We now have an array of "partial averages"
    for efficiency we don't average these anymore and just
-   take the biggest one at the start
+   take the one of highest degree (at the start). This is saved to the model
   */
   memcpy(&model->gyro_ref, averages, sizeof(Vector));
 }

@@ -37,13 +37,13 @@ typedef struct physicsModel {
 } physicsModel;
 
 /**
- * @brief calculates references for accelerometer measurements
+ * @brief calculates references for accelerometer measurements while device is stationary on a table
  * @param model pointer to model to calibrate
  */
 void calibrate_accel(physicsModel* model);
 
 /**
- * @brief calculates references for gyroscope measurements
+ * @brief calculates references for gyroscope measurements while device is stationary on a table
  * @param model pointer to model to calibrate
  */
 void calibrate_gyro(physicsModel* model);
