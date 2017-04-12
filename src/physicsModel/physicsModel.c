@@ -10,33 +10,7 @@
 #include "../imuCommunication/imuCommunication.h"
 #include "physicsModel.h"
 
-/* Recursive function for calibration functions */
-void merge_averages(Vector* averages, uint8_t* degrees, int8_t* tail) {
-  if(*tail == 0) return;
-  if(degrees[*tail - 1] == degrees[*tail]) {
-    /* Adds the last two vectors together and stores it in the second last location */
-    add_vector(averages + *tail, averages + *tail - 1, averages + *tail - 1);
-
-    /* Tail shortens */
-    (*tail)--;
-
-    /* The "merge-degree" is now one higher */
-    degrees[*tail]++;
-
-    /* Devide tail by two */
-    div_pow_two_vector(1, averages + *tail, averages + *tail);
-
-    /* Can we merge more? */
-    merge_averages(averages, degrees, tail);
-  }
-  return;
-}
-
-void calibrate_accel(physicsModel* model) {
-
-}
-
-void calibrate_gyro(physicsModel* model) {
+Vector streamed_calibration_average(Vector (*data_provider)(void)) {
   /*
    As a first attempt of filtering our raw data we will try to figure out just how much the sensor is off.
    Whilst the device is stationary on a table we will get a set amount of samples and average those to get a rough estimate of the error.
@@ -59,16 +33,38 @@ void calibrate_gyro(physicsModel* model) {
   int8_t tail = -1; /* needs to be -1 to have 0 tail index at first call off merge_averages */
   for(int i = 0; i < CALIBRATION_ITERATIONS; i++) {
     tail++;
-    averages[tail] = imu_get_angular();
-    merge_averages(averages, degrees, &tail);
+    averages[tail] = data_provider();
+
+    /* Merge same degrees */
+    while(tail > 0 && degrees[tail - 1] == degrees[tail]) {
+      /* Adds the last two vectors together and stores it in the second last location */
+      add_vector(averages + tail, averages + tail - 1, averages + tail - 1);
+
+      /* Tail shortens */
+      tail--;
+
+      /* The "merge-degree" is now one higher */
+      degrees[tail]++;
+
+      /* Devide tail by two */
+      div_pow_two_vector(1, averages + tail, averages + tail);
+    }
   }
 
   /*
    We now have an array of "partial averages"
    for efficiency we don't average these anymore and just
-   take the one of highest degree (at the start). This is saved to the model
+   take the one of highest degree (at the start)
   */
-  memcpy(&model->gyro_ref, averages, sizeof(Vector));
+  return averages[0];
+}
+
+void calibrate_accel(physicsModel* model) {
+
+}
+
+void calibrate_gyro(physicsModel* model) {
+  model->gyro_ref = streamed_calibration_average(imu_get_angular);
 }
 
 void init_ddi_buffer(ddiBuffer* buffer, Vector* init_values) {

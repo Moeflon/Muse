@@ -37,6 +37,13 @@ typedef struct physicsModel {
 } physicsModel;
 
 /**
+ * @brief calculates average of #CALIBRATION_ITERATIONS values obtained with the data_provider function with minimal memory usage
+ * @param data_provider function pointer to function returning vectors to be averaged
+ * @return the average
+ */
+Vector streamed_calibration_average(Vector (*data_provider)(void));
+
+/**
  * @brief calculates references for accelerometer measurements while device is stationary on a table
  * @param model pointer to model to calibrate
  */
