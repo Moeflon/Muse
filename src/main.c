@@ -10,14 +10,8 @@
 
 #define PI 3.1415
 
-int parser(uint8_t, uint8_t);
-
-int parser(uint8_t high, uint8_t low){
-  int16_t result;
-  result |= low;
-  result |= (high << 8);
-  return result;
-}
+/* Global model variable */
+static physicsModel model;
 
 int main(void) {
   DDRA = 0xFF; // Set all PORTA pins as output
@@ -29,7 +23,6 @@ int main(void) {
   backlightOn();
 
   imu_init();
-  physicsModel model;
   calibrate_gyro(&model);
 
   Vector values[3];
