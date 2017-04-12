@@ -7,7 +7,7 @@
 #include "imuCommunication.h"
 
 /* Load register and slave address definitions */
-#include "imu_registers.h"
+#include "registers.h"
 
 void imu_init() {
   WRITE_REG(PWR_MGMT_1, 0);

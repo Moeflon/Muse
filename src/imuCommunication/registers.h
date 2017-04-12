@@ -13,6 +13,6 @@
 #define GYRO_ZOUT_L 0x48
 
 /* Macros so we don't always have to supply our slave address */
-#define SLV_TWI_ADDR 0b11010000 // LSB indicates Read/Write; 2nd LSB indicates AD0 set to
+#define SLV_TWI_ADDR 0b11010000 /* LSB indicates Read/Write; 2nd LSB indicates AD0 */
 #define WRITE_REG(r, d) twi_write_reg(SLV_TWI_ADDR, r, d)
 #define READ_REG(r) twi_read_reg(SLV_TWI_ADDR, r)
