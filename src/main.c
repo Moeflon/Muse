@@ -29,25 +29,25 @@ int main(void) {
   backlightOn();
 
   imu_init();
-  physicsModel* model = create_model();
-  calibrate_gyro(model);
+  physicsModel model;
+  calibrate_gyro(&model);
 
   Vector values[3];
   values[0] = imu_get_angular();
   values[1] = imu_get_angular();
   values[2] = imu_get_angular();
-  init_ddi_buffer(&model->gyro_ddi, values);
+  init_ddi_buffer(&model.gyro_ddi, values);
 
   while(1) {
-    update_model_orientation(model);
+    update_model_orientation(&model);
     printCharToLCD('X', 0, 0);
-    printIntToLCD(model->orientation.x, 0, 2); //Print waarden van -16384..16384 (-2g..2g)
+    printIntToLCD(model.orientation.x, 0, 2); //Print waarden van -16384..16384 (-2g..2g)
 
     printCharToLCD('Y', 1, 0);
-    printIntToLCD(model->orientation.y, 1, 2);
+    printIntToLCD(model.orientation.y, 1, 2);
 
     printCharToLCD('Z', 1, 8);
-    printIntToLCD(model->orientation.z, 1, 10);
+    printIntToLCD(model.orientation.z, 1, 10);
 
     _delay_ms(400);
     clearLCD();

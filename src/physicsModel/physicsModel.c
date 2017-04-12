@@ -10,16 +10,6 @@
 #include "../imuCommunication/imuCommunication.h"
 #include "physicsModel.h"
 
-physicsModel* create_model() {
-  physicsModel* model = malloc(sizeof(physicsModel));
-  return model;
-}
-
-void destroy_model(physicsModel* model) {
-  /* Free all memory allocated by create_model */
-  free(model);
-}
-
 /* Recursive function for calibration functions */
 void merge_averages(Vector* averages, uint8_t* degrees, int8_t* tail) {
   if(*tail == 0) return;

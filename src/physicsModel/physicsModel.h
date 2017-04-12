@@ -37,18 +37,6 @@ typedef struct physicsModel {
 } physicsModel;
 
 /**
- * @brief creates model
- * @return pointer to model
- */
-physicsModel* create_model(void);
-
-/**
- * @brief frees model memory
- * @param model pointer to model
- */
-void destroy_model(physicsModel* model);
-
-/**
  * @brief calculates references for accelerometer measurements
  * @param model pointer to model to calibrate
  */
