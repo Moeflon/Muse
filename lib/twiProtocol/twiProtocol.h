@@ -1,6 +1,8 @@
 /**
  * @file twiProtocol.h
  * @brief Functions for accessing TWI devices
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
  */
 
 #ifndef TWI_PROTOCOL_H_

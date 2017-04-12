@@ -1,3 +1,9 @@
+/**
+ * @file twiProtocol.c
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
+ */
+
 #include "twiProtocol.h"
 /*
 TODO: change register changing functions to macros

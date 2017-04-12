@@ -1,19 +1,21 @@
 /**
  * @file imuCommunication.h
  * @brief Declares functions that communicate with accelerometer and parse the data into Vectors
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
  */
+
 #ifndef IMU_COMMUNICATION_H
 #define IMU_COMMUNICATION_H
 
-#include <twiProtocol.h>
+#include <stdint.h>
 #include <vectorMaths.h>
+#include <twiProtocol.h>
 
-/* Load register and slave address definitions */
-#include "imu_registers.h"
-
-/* Macros so we don't always have to supply our slave address */
-#define WRITE_REG(r, d) twi_write_reg(SLV_TWI_ADDR, r, d)
-#define READ_REG(r) twi_read_reg(SLV_TWI_ADDR, r)
+/**
+ * @brief sets power mode of IMU to be able to read data
+ */
+void imu_init(void);
 
 /**
  * @brief parses high and low bytes to 16-bit int

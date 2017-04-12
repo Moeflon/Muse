@@ -1,10 +1,13 @@
 /**
- * physicsModel.c
+ * @file physicsModel.c
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
  */
+
 #include <stdlib.h>
 #include <string.h>
 #include <vectorMaths.h>
-#include <imuCommunication.h>
+#include "../imuCommunication/imuCommunication.h"
 #include "physicsModel.h"
 
 physicsModel* create_model() {
@@ -100,14 +103,15 @@ void normalize_accel(Vector* accel, Vector* ref) {
 }
 
 void normalize_angular(Vector* angular, physicsModel* model) {
+  /* Remove the reference so stationary would be 0, 0, 0 */
   sub_vector(angular, &model->gyro_ref, angular);
+
+  /* Remove the drift using DDI */
   ddi(angular, &model->gyro_ddi);
 }
 
 void update_model_orientation(physicsModel* model) {
   Vector angular = imu_get_angular();
-
   normalize_angular(&angular, model);
-
   add_vector(&angular, &model->orientation, &model->orientation);
 }

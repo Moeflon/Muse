@@ -1,12 +1,13 @@
 /**
  * @file physicsModel.h
- * @brief Declares functions to calibrate and interpret accelerometer data
+ * @brief Declares functions to calibrate and interpret accelerometer & gyro data
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
  */
 
 #ifndef PHYSICS_MODEL_H_
 #define PHYSICS_MODEL_H_
 
-#include <imuCommunication.h>
 #include <vectorMaths.h>
 
 #define SAMPLE_STREAM_SIZE 3

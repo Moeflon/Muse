@@ -1,6 +1,8 @@
 /**
  * @file vectorMaths.h
  * @brief Simple vector struct and vector operation definitions
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
  */
 
 #ifndef VECTOR_MATHS_H_

@@ -1,9 +1,11 @@
-/*
- * vectorMaths.c
+/**
+ * @file vectorMaths.c
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
  */
 
-#include "vectorMaths.h"
 #include <math.h>
+#include "vectorMaths.h"
 
 void add_vector(Vector* a, Vector* b, Vector* dest) {
   dest->x = a->x + b->x;

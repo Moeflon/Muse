@@ -1,12 +1,12 @@
 #include <dwenguinoLCD.h>
 #include <twiProtocol.h>
-#include <imuCommunication.h>
 #include <math.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <util/twi.h>
 #include <util/delay.h>
-#include <physicsModel.h>
+#include "imuCommunication/imuCommunication.h"
+#include "physicsModel/physicsModel.h"
 
 #define PI 3.1415
 
@@ -28,23 +28,21 @@ int main(void) {
   clearLCD();
   backlightOn();
 
-  // Set power mode
-  WRITE_REG(PWR_MGMT_1, 0);
+  imu_init();
   physicsModel* model = create_model();
   calibrate_gyro(model);
   while(1) {
     update_model_orientation(model);
     printCharToLCD('X', 0, 0);
-    printIntToLCD(model->orientation->x, 0, 2); //Print waarden van -16384..16384 (-2g..2g)
+    printIntToLCD(model->orientation.x, 0, 2); //Print waarden van -16384..16384 (-2g..2g)
 
     printCharToLCD('Y', 1, 0);
-    printIntToLCD(model->orientation->y, 1, 2);
+    printIntToLCD(model->orientation.y, 1, 2);
 
     printCharToLCD('Z', 1, 8);
-    printIntToLCD(model->orientation->z, 1, 10);
+    printIntToLCD(model->orientation.z, 1, 10);
 
     _delay_ms(400);
     clearLCD();
-
   }
 }

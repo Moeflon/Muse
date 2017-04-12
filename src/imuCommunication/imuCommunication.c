@@ -1,4 +1,17 @@
+/**
+ * @file imuCommunication.c
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
+ */
+
 #include "imuCommunication.h"
+
+/* Load register and slave address definitions */
+#include "imu_registers.h"
+
+void imu_init() {
+  WRITE_REG(PWR_MGMT_1, 0);
+}
 
 int16_t imu_parse(uint8_t high, uint8_t low) {
   int16_t result; /* Our result is 16-bit and signed */
