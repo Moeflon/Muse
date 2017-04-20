@@ -5,3 +5,4 @@
 assembly.s
 .travis.yml
 platformio.ini
+lib/readme.txt
