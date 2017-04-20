@@ -18,7 +18,11 @@
 #define SAMPLE_PERIOD_MS 8
 #define GYRO_FACTOR_DENOM 128
 
-physicsModel g_model;
+/* Global variable for storing model state.
+   Reference in other files with 'extern volatile physicsModel g_model'.
+   Is volatile because it is altered in interrupts. And can thus change outside of the normal flow of execution, making
+   certain optimizations dangerous. Volatile refrains the compiler from applying these optimizations. */
+volatile physicsModel g_model;
 
 /**
  * @brief Sets necessary registers for enabling timer1

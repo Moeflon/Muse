@@ -11,7 +11,8 @@
 #include "../imuCommunication/imuCommunication.h"
 #include "physicsSampler.h"
 
-extern physicsModel g_model;
+/* Originally declared in physicsSampler/physicsSampler.h */
+extern volatile physicsModel g_model;
 
 void start_sampler() {
   SREG |= _BV(SREG_I);
@@ -35,5 +36,11 @@ void update_model_orientation(physicsModel* model) {
 }
 
 ISR(TIMER1_COMPA_vect) {
-  update_model_orientation(&g_model);
+  /* Cache global model in local variable for faster execution */
+  physicsModel model = g_model;
+
+  update_model_orientation(&model);
+
+  /* Update global variable */
+  g_model = model;
 }
