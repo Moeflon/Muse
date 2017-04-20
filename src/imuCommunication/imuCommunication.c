@@ -10,6 +10,7 @@
 #include "registers.h"
 
 void imu_init() {
+  PRR0 &= ~_BV(PRTWI); /* TWI enabled */
   WRITE_REG(PWR_MGMT_1, 0);
 }
 

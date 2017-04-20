@@ -6,7 +6,9 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <util/delay.h>
 #include <vectorMaths.h>
+
 #include "../imuCommunication/imuCommunication.h"
 #include "physicsModel.h"
 
@@ -47,7 +49,7 @@ Vector streamed_calibration_average(Vector (*data_provider)(void)) {
       degrees[tail]++;
 
       /* Devide tail by two */
-      div_pow_two_vector(1, averages + tail, averages + tail);
+      div_scal_vector(2, averages + tail, averages + tail);
     }
   }
 
@@ -64,27 +66,29 @@ void calibrate_accel(physicsModel* model) {
 }
 
 void calibrate_gyro(physicsModel* model) {
+  _delay_ms(600);
   model->gyro_ref = streamed_calibration_average(imu_get_angular);
 }
 
-void init_ddi_buffer(ddiBuffer* buffer, Vector* init_values) {
-    memcpy(buffer->sample_stream, init_values, sizeof(buffer->sample_stream));
+void init_ddi_buffer(ddiBuffer* buffer, Vector (*data_provider)()) {
+    for(int i = 0; i < DDI_SAMPLE_STREAM_SIZE; i++) {
+      buffer->sample_stream[i] = data_provider();
+    }
 }
 
 void ddi(Vector* new_sample, ddiBuffer* buffer) {
   /* Shift stream values one to the left */
-  memcpy(buffer->sample_stream, buffer->sample_stream + 1, (SAMPLE_STREAM_SIZE - 1) * sizeof(buffer->sample_stream[0]));
+  memcpy(buffer->sample_stream, buffer->sample_stream + 1, (DDI_SAMPLE_STREAM_SIZE - 1) * sizeof(buffer->sample_stream[0]));
 
   /* Last stream value is new sample */
-  buffer->sample_stream[SAMPLE_STREAM_SIZE - 1] = *new_sample;
+  buffer->sample_stream[DDI_SAMPLE_STREAM_SIZE - 1] = *new_sample;
 
   /*
    * Caluclate second derivative and save it in first array slot as we will not need this one in the future
-   * We assume
    * @see http://web.stanford.edu/~fringer/teaching/numerical_methods_02/handouts/lecture4.pdf Formula (30)
    */
   /* Add last value to first one */
-  add_vector(&buffer->sample_stream[0], &buffer->sample_stream[SAMPLE_STREAM_SIZE - 1], &buffer->sample_stream[0]);
+  add_vector(&buffer->sample_stream[0], &buffer->sample_stream[DDI_SAMPLE_STREAM_SIZE - 1], &buffer->sample_stream[0]);
 
   /* Subtract middle vector from first one twice */
   sub_vector(&buffer->sample_stream[0], &buffer->sample_stream[1], &buffer->sample_stream[0]);
@@ -110,10 +114,4 @@ void normalize_angular(Vector* angular, physicsModel* model) {
 
   /* Remove the drift using DDI */
   ddi(angular, &model->gyro_ddi);
-}
-
-void update_model_orientation(physicsModel* model) {
-  Vector angular = imu_get_angular();
-  normalize_angular(&angular, model);
-  add_vector(&angular, &model->orientation, &model->orientation);
 }

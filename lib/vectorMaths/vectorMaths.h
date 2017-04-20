@@ -44,6 +44,14 @@ void sub_vector(Vector* a, Vector* b, Vector* dest);
 void div_pow_two_vector(uint8_t pow, Vector* a, Vector* dest);
 
 /**
+ * @brief devides vector by a given scalar
+ * @param scal scalar
+ * @param a pointer to vector we want to devide
+ * @param [out] dest pointer to destionation vector
+ */
+void div_scal_vector(int16_t scal, Vector* a, Vector* dest);
+
+/**
  * @brief multiplies vector by a given power of 2
  * @param pow power of two
  * @param a pointer to vector we want to devide

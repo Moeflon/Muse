@@ -10,17 +10,17 @@
 
 #include <vectorMaths.h>
 
-#define SAMPLE_STREAM_SIZE 3
+#define DDI_SAMPLE_STREAM_SIZE 3
 
-#define CALIBRATION_ITERATIONS 8192
-#define AVERAGING_BUFFER_SIZE 13 /* must be >= lg of iterations but lg is expensive! */
+#define CALIBRATION_ITERATIONS 2048
+#define AVERAGING_BUFFER_SIZE 11 /* must be >= lg of iterations but lg is expensive! */
 
 /**
  * @brief The ddiBuffer stores the necessary values to filter out drift by double derivation and integration on the fly
  * @see http://www.mdpi.com/1424-8220/14/12/23230/htm#DigitalFilteringProtocol
  */
 typedef struct ddiBuffer {
-  Vector sample_stream[SAMPLE_STREAM_SIZE]; /**> Holds three measurements */
+  Vector sample_stream[DDI_SAMPLE_STREAM_SIZE]; /**> Holds three measurements */
   Vector I1; /**> last integration value */
   Vector I2; /**> last double integration value */
 } ddiBuffer;
@@ -58,9 +58,9 @@ void calibrate_gyro(physicsModel* model);
 /**
  * @brief initializes ddi buffer with given vector of values
  * @param buffer pointer to ddiBuffer struct
- * @param init_values array containing initial values
+ * @param data_provider function pointer to function returning vectors to be averaged
  */
-void init_ddi_buffer(ddiBuffer* buffer, Vector* init_values);
+void init_ddi_buffer(ddiBuffer* buffer, Vector (*data_provider)(void));
 
 /**
  * @brief Removes the drift from new sample value using buffered values and adjusts buffers for further use
@@ -83,17 +83,5 @@ void normalize_accel(Vector* accel, Vector* ref);
  * @param model pointer to model
  */
 void normalize_angular(Vector* angular, physicsModel* model);
-
-/**
- * @brief adjusts orientation vector according to new measurement
- * @param model pointer to model
- */
-void update_model_orientation(physicsModel* model);
-
-/**
- * @brief adjusts position vector according to new measurement
- * @param model pointer to model Vector
- */
-void update_model_position(physicsModel* model);
 
 #endif

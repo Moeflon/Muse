@@ -25,6 +25,12 @@ void div_pow_two_vector(uint8_t pow, Vector* a, Vector* dest) {
   dest->z = a->z >> pow;
 }
 
+void div_scal_vector(int16_t scal, Vector* a, Vector* dest) {
+  dest->x = a->x / scal;
+  dest->y = a->y / scal;
+  dest->z = a->z / scal;
+}
+
 void mul_pow_two_vector(uint8_t pow, Vector* a, Vector* dest) {
   dest->x = a->x << pow;
   dest->y = a->y << pow;
