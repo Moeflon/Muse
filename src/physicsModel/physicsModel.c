@@ -85,6 +85,7 @@ void ddi(Vector* new_sample, ddiBuffer* buffer) {
 
   /*
    * Caluclate second derivative and save it in first array slot as we will not need this one in the future
+   * We assume
    * @see http://web.stanford.edu/~fringer/teaching/numerical_methods_02/handouts/lecture4.pdf Formula (30)
    */
   /* Add last value to first one */
@@ -111,7 +112,4 @@ void normalize_accel(Vector* accel, Vector* ref) {
 void normalize_angular(Vector* angular, physicsModel* model) {
   /* Remove the reference so stationary would be 0, 0, 0 */
   sub_vector(angular, &model->gyro_ref, angular);
-
-  /* Remove the drift using DDI */
-  ddi(angular, &model->gyro_ddi);
 }

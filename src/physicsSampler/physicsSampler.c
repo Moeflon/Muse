@@ -33,6 +33,7 @@ void update_model_orientation(physicsModel* model) {
   normalize_angular(&angular, model);
   div_scal_vector(GYRO_FACTOR_DENOM, &angular, &angular);
   add_vector(&angular, &model->orientation, &model->orientation);
+  ddi(&model->orientation, &model->gyro_ddi);
 }
 
 ISR(TIMER1_COMPA_vect) {
