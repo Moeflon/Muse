@@ -32,7 +32,17 @@ void update_model_orientation(physicsModel* model) {
   Vector angular = imu_get_angular();
   normalize_angular(&angular, model);
   div_scal_vector(GYRO_FACTOR_DENOM, &angular, &angular);
-  add_vector(&angular, &model->orientation, &model->orientation);
+
+  coord_transform(&angular, ANGULAR_SCALE, &model->orientation, ANGLE_SCALE);
+
+  /* trapezoid rule integration */
+  add_vector(&angular, &model->prev_angular, &model->prev_angular);
+  div_scal_vector(2, &model->prev_angular, &model->prev_angular);
+  add_vector(&model->orientation, &model->prev_angular, &model->orientation);
+
+  /* Also save current orientation in prev_orientation for trapezoid rule integration */
+  model->prev_angular = angular;
+
   ddi(&model->orientation, &model->gyro_ddi);
 }
 

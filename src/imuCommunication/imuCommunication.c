@@ -12,6 +12,14 @@
 void imu_init() {
   PRR0 &= ~_BV(PRTWI); /* TWI enabled */
   WRITE_REG(PWR_MGMT_1, 0);
+
+  uint8_t gyro_config = READ_REG(GYRO_CONFIG);
+  gyro_config &= ~(0b11 << FS_SEL); /* sets two FS_SEL places to 0 */
+  WRITE_REG(GYRO_CONFIG, gyro_config | (GYRO_MODE << FS_SEL));
+
+  uint8_t accel_config = READ_REG(ACCEL_CONFIG);
+  accel_config &= ~(0b11 << AFS_SEL); /* sets two AFS_SEL places to 0 */
+  WRITE_REG(ACCEL_CONFIG, accel_config | (ACCEL_MODE << AFS_SEL));
 }
 
 int16_t imu_parse(uint8_t high, uint8_t low) {

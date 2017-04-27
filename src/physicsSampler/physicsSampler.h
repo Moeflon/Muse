@@ -14,9 +14,11 @@
 #define TIMER1_PRESCALER_64 3
 #define TIMER1_TICKS_PER_MS_P64 250
 
-/* See paper for explanation, these two need to mutiply together to 1024 */
+/* See paper for explanation, these two need to mutiply together to 128 */
 #define SAMPLE_PERIOD_MS 8
-#define GYRO_FACTOR_DENOM 128
+#define GYRO_FACTOR_DENOM 16
+#define ANGLE_SCALE 120 /* amount of orientation units per degree */
+#define ANGULAR_SCALE 2 /* amount of angular velocity units per degree/s */
 
 /* Global variable for storing model state.
    Reference in other files with 'extern volatile physicsModel g_model'.

@@ -30,6 +30,8 @@ typedef struct ddiBuffer {
  */
 typedef struct physicsModel {
   Vector orientation; /**> orientation vector */
+  Vector prev_angular; /**> previous angular velocity vector */
+  uint16_t no_angular_count; /**> amount of times there was no angular velocity for dynamic reset */
   Vector position; /**> position vector */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */

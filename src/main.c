@@ -13,21 +13,18 @@
 extern volatile physicsModel g_model;
 
 int main(void) {
+  static physicsModel model;
+
   initLCD();
   clearLCD();
   backlightOn();
 
   imu_init();
-  physicsModel model = g_model;
+
+  model = g_model;
   calibrate_gyro(&model);
-
-  Vector first_three_values() {
-    Vector vec;
-    return vec;
-  }
-  init_ddi_buffer(&model.gyro_ddi, first_three_values);
-
   g_model = model;
+
   start_sampler();
 
   for(;;) {

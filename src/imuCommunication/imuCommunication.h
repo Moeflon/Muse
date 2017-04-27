@@ -8,6 +8,9 @@
 #ifndef IMU_COMMUNICATION_H
 #define IMU_COMMUNICATION_H
 
+#define GYRO_MODE 2 /* 1000 degrees/s, see datasheet */
+#define ACCEL_MODE 1 /* 4g/s, see datasheet */
+
 #include <stdint.h>
 #include <vectorMaths.h>
 #include <twiProtocol.h>

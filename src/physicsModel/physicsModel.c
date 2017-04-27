@@ -66,7 +66,7 @@ void calibrate_accel(physicsModel* model) {
 }
 
 void calibrate_gyro(physicsModel* model) {
-  _delay_ms(600);
+  _delay_ms(600); /* debounce */
   model->gyro_ref = streamed_calibration_average(imu_get_angular);
 }
 
@@ -85,7 +85,6 @@ void ddi(Vector* new_sample, ddiBuffer* buffer) {
 
   /*
    * Caluclate second derivative and save it in first array slot as we will not need this one in the future
-   * We assume
    * @see http://web.stanford.edu/~fringer/teaching/numerical_methods_02/handouts/lecture4.pdf Formula (30)
    */
   /* Add last value to first one */
