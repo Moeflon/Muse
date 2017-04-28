@@ -10,10 +10,10 @@
 
 #include <vectorMaths.h>
 
-#define DDI_SAMPLE_STREAM_SIZE 3
-
 #define CALIBRATION_ITERATIONS 2048
 #define AVERAGING_BUFFER_SIZE 11 /* must be >= lg of iterations but lg is expensive! */
+
+#define DDI_SAMPLE_STREAM_SIZE 3
 
 /**
  * @brief The ddiBuffer stores the necessary values to filter out drift by double derivation and integration on the fly
@@ -26,16 +26,23 @@ typedef struct ddiBuffer {
 } ddiBuffer;
 
 /**
+ * @brief The ddiBuffer stores the necessary values to filter out drift by double derivation and integration on the fly
+ * @see http://www.mdpi.com/1424-8220/14/12/23230/htm#DigitalFilteringProtocol
+ */
+typedef struct ddiBuffer32 {
+  Vector32 sample_stream[DDI_SAMPLE_STREAM_SIZE]; /**> Holds three measurements */
+  Vector32 I1; /**> last integration value */
+  Vector32 I2; /**> last double integration value */
+} ddiBuffer;
+
+/**
  * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions
  */
 typedef struct physicsModel {
-  Vector orientation; /**> orientation vector */
-  Vector prev_angular; /**> previous angular velocity vector */
-  uint16_t no_angular_count; /**> amount of times there was no angular velocity for dynamic reset */
+  Vector32 orientation; /**> orientation vector */
   Vector position; /**> position vector */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */
-  ddiBuffer gyro_ddi; /**> gyroscope data DDI buffer */
 } physicsModel;
 
 /**
@@ -85,5 +92,17 @@ void normalize_accel(Vector* accel, Vector* ref);
  * @param model pointer to model
  */
 void normalize_angular(Vector* angular, physicsModel* model);
+
+/**
+ * @brief adjusts orientation vector according to new measurement
+ * @param model pointer to model
+ */
+void update_model_orientation(physicsModel* model);
+
+/**
+ * @brief adjusts position vector according to new measurement
+ * @param model pointer to model Vector
+ */
+void update_model_position(physicsModel* model);
 
 #endif

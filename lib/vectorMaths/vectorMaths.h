@@ -28,96 +28,58 @@ typedef struct Vector32 {
   int32_t z; /**> z component */
 } Vector32;
 
+#define add_vectors(a, b, c) do {   \
+  (c)->x = (a)->x + (b)->x;         \
+  (c)->y = (a)->y + (b)->y;         \
+  (c)->z = (a)->z + (b)->z;         \
+} while 0
+
+#define sub_vectors(a, b, c) do {   \
+  (c)->x = (a)->x - (b)->x;         \
+  (c)->y = (a)->y - (b)->y;         \
+  (c)->z = (a)->z - (b)->z;         \
+} while 0
+
+#define add_to_vector(a, b) do {   \
+  (a)->x += (b)->x;                \
+  (a)->y += (b)->y;                \
+  (a)->z += (b)->z;                \
+} while 0
+
+#define sub_from_vector(a, b) do { \
+  (a)->x -= (b)->x;                \
+  (a)->y -= (b)->y;                \
+  (a)->z -= (b)->z;                \
+} while 0
+
+#define div_vectors(s, a, b) do {  \
+  (b)->x = (a)->x / (s);           \
+  (b)->y = (a)->y / (s);           \
+  (b)->z = (a)->z / (s);           \
+} while 0
+
+#define mul_vectors(s, a, b) do {  \
+  (b)->x = (a)->x * (s);           \
+  (b)->y = (a)->y * (s);           \
+  (b)->z = (a)->z * (s);           \
+} while 0
+
+#define div_vector(s, a) do {      \
+  (a)->x /= (s);                   \
+  (a)->y /= (s);                   \
+  (a)->z /= (s);                   \
+} while 0
+
+#define mul_vector(s, a) do {      \
+  (a)->x *= (s);                   \
+  (a)->y *= (s);                   \
+  (a)->z *= (s);                   \
+} while 0
+
 /**
  * @brief sine lookup table
  */
 extern const uint8_t sin_table[91];
-
-/**
- * @brief converts vector to 32-bit vector
- * @param v vector
- * @return 32-bit vector
- */
-Vector32 vector_to_vector32(Vector* v);
-
-/**
- * @brief converts 32-bit vector to 16-bit vector
- * @param v vector
- * @return 16-bit vector
- */
-Vector vector32_to_vector(Vector* v32);
-
-/**
- * @brief adds operand Vectors and stores it in supplied pointer
- * @param a operand 1
- * @param b operand 2
- * @param [out] dest destination pointer
- */
-void add_vector(Vector* a, Vector* b, Vector* dest);
-
-/**
- * @brief adds operand Vectors and stores it in supplied pointer
- * @param a operand 1
- * @param b operand 2
- * @param [out] dest destination pointer
- */
-void add_vector32(Vector32* a, Vector32* b, Vector32* dest);
-
-/**
- * @brief subtracts operand Vectors left to right and stores it in supplied pointer
- * @param a operand 1
- * @param b operand 2
- * @param [out] dest destination pointer
- */
-void sub_vector(Vector* a, Vector* b, Vector* dest);
-
-/**
- * @brief subtracts operand Vectors left to right and stores it in supplied pointer
- * @param a operand 1
- * @param b operand 2
- * @param [out] dest destination pointer
- */
-void sub_vector32(Vector32* a, Vector32* b, Vector32* dest);
-
-/**
- * @brief devides vector by a given power of 2
- * @param pow power of two
- * @param a pointer to vector we want to devide
- * @param [out] dest pointer to destionation vector
- */
-void div_pow_two_vector(uint8_t pow, Vector* a, Vector* dest);
-
-/**
- * @brief devides vector by a given scalar
- * @param scal scalar
- * @param a pointer to vector we want to devide
- * @param [out] dest pointer to destionation vector
- */
-void div_scal_vector(int16_t scal, Vector* a, Vector* dest);
-
-/**
- * @brief devides vector by a given scalar
- * @param scal scalar
- * @param a pointer to vector we want to devide
- * @param [out] dest pointer to destionation vector
- */
-void div_scal_vector32(int16_t scal, Vector32* a, Vector32* dest);
-
-/**
- * @brief multiplies vector by a given scalar
- * @param scal scalar
- * @param a pointer to vector we want to multiply
- * @param [out] dest pointer to destionation vector
- */
-void mul_scal_vector32(int16_t scal, Vector32* a, Vector32* dest);
-
-/**
- * @brief multiplies vector by a given power of 2
- * @param pow power of two
- * @param a pointer to vector we want to devide
- * @param [out] dest pointer to destionation vector
- */
-void mul_pow_two_vector(uint8_t pow, Vector* a, Vector* dest);
 
 /**
  * @brief Returns sin from lookuptable, fixed point multiplied by 100
@@ -141,11 +103,5 @@ int8_t cos100(int16_t degrees);
  * @param o_scale number of orientation units are one physical unit (be careful for overflow)
  */
 void coord_transform(Vector* measurement, int16_t m_scale,  Vector* orientation, int16_t o_scale);
-
-/**
- * @brief calculates normal
- * @return norm
- */
-uint16_t vector_norm(Vector* a);
 
 #endif

@@ -11,15 +11,29 @@
 
 void imu_init() {
   PRR0 &= ~_BV(PRTWI); /* TWI enabled */
-  WRITE_REG(PWR_MGMT_1, 0);
 
+  WRITE_REG(PWR_MGMT_1, 0); /* Set correct power mode */
+
+  /* Set gyro precision mode */
   uint8_t gyro_config = READ_REG(GYRO_CONFIG);
   gyro_config &= ~(0b11 << FS_SEL); /* sets two FS_SEL places to 0 */
   WRITE_REG(GYRO_CONFIG, gyro_config | (GYRO_MODE << FS_SEL));
 
+  /* Set accelerometer precision mode */
   uint8_t accel_config = READ_REG(ACCEL_CONFIG);
   accel_config &= ~(0b11 << AFS_SEL); /* sets two AFS_SEL places to 0 */
   WRITE_REG(ACCEL_CONFIG, accel_config | (ACCEL_MODE << AFS_SEL));
+
+  /* Set sample rate divider */
+  WRITE_REG(SMPLRT_DIV, IMU_SAMPLE_RATE_DIVIDER);
+
+  /* Configure interrupts to send 50us pulse */
+  uint8_t int_pin_cfg = READ_REG(INT_PIN_CFG);
+  int_pin_cfg &= ~_BV(LATCH_INT_EN);
+  WRITE_REG(INT_PIN_CFG, int_pin_cfg);
+
+  /* Enable data ready interrupts */
+  WRITE_REG(FIFO_EN, _BV(XG_FIFO_EN) | _BV(YG_FIFO_EN) | _BV(ZG_FIFO_EN) | _BV(ACCEL_FIFO_EN));
 }
 
 int16_t imu_parse(uint8_t high, uint8_t low) {

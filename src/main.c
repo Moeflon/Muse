@@ -5,11 +5,12 @@
 #include <avr/io.h>
 #include <util/twi.h>
 #include <util/delay.h>
+#include "globals.h"
 #include "imuCommunication/imuCommunication.h"
 #include "physicsModel/physicsModel.h"
 #include "physicsSampler/physicsSampler.h"
 
-/* Originally declared in physicsSampler/physicsSampler.h */
+/* Originally declared in globals.h */
 extern volatile physicsModel g_model;
 
 int main(void) {

@@ -39,17 +39,18 @@ Vector streamed_calibration_average(Vector (*data_provider)(void)) {
 
     /* Merge same degrees */
     while(tail > 0 && degrees[tail - 1] == degrees[tail]) {
+      /* Divide averaging values by two first for overflow protection */
+      div_vector(2, averages + tail);
+      div_vector(2, averages + tail - 1);
+
       /* Adds the last two vectors together and stores it in the second last location */
-      add_vector(averages + tail, averages + tail - 1, averages + tail - 1);
+      add_to_vector(averages + tail - 1, averages + tail);
 
       /* Tail shortens */
       tail--;
 
       /* The "merge-degree" is now one higher */
       degrees[tail]++;
-
-      /* Devide tail by two */
-      div_scal_vector(2, averages + tail, averages + tail);
     }
   }
 
@@ -70,13 +71,13 @@ void calibrate_gyro(physicsModel* model) {
   model->gyro_ref = streamed_calibration_average(imu_get_angular);
 }
 
-void init_ddi_buffer(ddiBuffer* buffer, Vector (*data_provider)()) {
+void init_ddi_buffer32(ddiBuffer32* buffer, Vector32 (*data_provider)()) {
     for(int i = 0; i < DDI_SAMPLE_STREAM_SIZE; i++) {
       buffer->sample_stream[i] = data_provider();
     }
 }
 
-void ddi(Vector* new_sample, ddiBuffer* buffer) {
+void ddi32(Vector32* new_sample, ddiBuffer32* buffer) {
   /* Shift stream values one to the left */
   memcpy(buffer->sample_stream, buffer->sample_stream + 1, (DDI_SAMPLE_STREAM_SIZE - 1) * sizeof(buffer->sample_stream[0]));
 
@@ -88,27 +89,36 @@ void ddi(Vector* new_sample, ddiBuffer* buffer) {
    * @see http://web.stanford.edu/~fringer/teaching/numerical_methods_02/handouts/lecture4.pdf Formula (30)
    */
   /* Add last value to first one */
-  add_vector(&buffer->sample_stream[0], &buffer->sample_stream[DDI_SAMPLE_STREAM_SIZE - 1], &buffer->sample_stream[0]);
+  add_to_vector(&buffer->sample_stream[0], &buffer->sample_stream[DDI_SAMPLE_STREAM_SIZE - 1]);
 
   /* Subtract middle vector from first one twice */
-  sub_vector(&buffer->sample_stream[0], &buffer->sample_stream[1], &buffer->sample_stream[0]);
-  sub_vector(&buffer->sample_stream[0], &buffer->sample_stream[1], &buffer->sample_stream[0]);
+  sub_from_vector(&buffer->sample_stream[0], &buffer->sample_stream[1]);
+  sub_from_vector(&buffer->sample_stream[0], &buffer->sample_stream[1]);
 
-  /* Add second derivative to I1 and save in I1 */
-  add_vector(&buffer->sample_stream[0], &buffer->I1, &buffer->I1);
+  /* Add second derivative to I1 */
+  add_to_vector(&buffer->I1, &buffer->sample_stream[0]);
 
-  /* Add I1 to I2 and save in I2 */
-  add_vector(&buffer->I1, &buffer->I2, &buffer->I2);
+  /* Add I1 to I2 */
+  add_to_vector(&buffer->I2, &buffer->I1);
 
   /* adjusted sample = I2 */
   new_sample = &buffer->I2;
 }
 
-void normalize_accel(Vector* accel, Vector* ref) {
-
-}
-
 void normalize_angular(Vector* angular, physicsModel* model) {
   /* Remove the reference so stationary would be 0, 0, 0 */
-  sub_vector(angular, &model->gyro_ref, angular);
+  sub_from_vector(angular, &model->gyro_ref);
+}
+
+void update_model_orientation(physicsModel* model) {
+  Vector angular = imu_get_angular();
+  normalize_angular(&angular, model);
+
+  coord_transform(&angular, ANGULAR_SCALE, &model->orientation, ANGLE_SCALE);
+
+  /* trapezoid rule integration */
+  add_vector(&angular, &model->prev_angular, &model->prev_angular);
+  div_scal_vector(2, &model->prev_angular, &model->prev_angular);
+  add_vector(&model->orientation, &model->prev_angular, &model->orientation);
+
 }

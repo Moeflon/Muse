@@ -5,18 +5,22 @@
  * @author Victor-Louis De Gusseme
  */
 
-#ifndef IMU_COMMUNICATION_H
-#define IMU_COMMUNICATION_H
+#ifndef IMU_COMMUNICATION_H_
+#define IMU_COMMUNICATION_H_
 
 #define GYRO_MODE 2 /* 1000 degrees/s, see datasheet */
+#define GYRO_DEG_S 1000
 #define ACCEL_MODE 1 /* 4g/s, see datasheet */
+#define ACCEL_G_S 4
+#define IMU_SAMPLE_RATE 400 /* sample rate of imu in herz */
+#define IMU_SAMPLE_RATE_DIVIDER 19 /* Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV), GOR is 8kHz in default filtering, so 19 gives 400Hz */
 
 #include <stdint.h>
 #include <vectorMaths.h>
 #include <twiProtocol.h>
 
 /**
- * @brief sets power mode of IMU to be able to read data
+ * @brief sets up IMU with desired settings
  */
 void imu_init(void);
 
