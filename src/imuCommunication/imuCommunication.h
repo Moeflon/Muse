@@ -25,6 +25,16 @@
 void imu_init(void);
 
 /**
+ * @brief sets up IMU registers for samping
+ */
+void imu_init_sampling(void);
+
+/**
+ * @brief sets up IMU register for sporadic communication
+ */
+void imu_uninit_sampling(void);
+
+/**
  * @brief parses high and low bytes to 16-bit int
  * @param high high bits
  * @param low low bits

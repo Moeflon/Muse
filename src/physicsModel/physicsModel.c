@@ -114,11 +114,11 @@ void update_model_orientation(physicsModel* model) {
   Vector angular = imu_get_angular();
   normalize_angular(&angular, model);
 
-  coord_transform(&angular, ANGULAR_SCALE, &model->orientation, ANGLE_SCALE);
+  //coord_transform(&angular, ANGULAR_SCALE, &model->orientation, ANGLE_SCALE);
 
   /* trapezoid rule integration */
-  add_vector(&angular, &model->prev_angular, &model->prev_angular);
-  div_scal_vector(2, &model->prev_angular, &model->prev_angular);
-  add_vector(&model->orientation, &model->prev_angular, &model->orientation);
+  //add_vector(&angular, &model->prev_angular, &model->prev_angular);
+  //div_scal_vector(2, &model->prev_angular, &model->prev_angular);
+  //add_vector(&model->orientation, &model->prev_angular, &model->orientation);
 
 }

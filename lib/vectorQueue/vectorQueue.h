@@ -28,7 +28,7 @@ typedef struct vectorQueue {
  * @retval 0 successfully added
  * @retval 1 overflowed
  */
-uint8_t vq_enqueue(Vector* v, vectorQueue* q);
+uint8_t vq_enqueue(Vector v, vectorQueue* q);
 
 /**
  * @brief Returns how much free space there is left in the queue

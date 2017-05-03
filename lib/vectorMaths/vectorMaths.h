@@ -32,49 +32,49 @@ typedef struct Vector32 {
   (c)->x = (a)->x + (b)->x;         \
   (c)->y = (a)->y + (b)->y;         \
   (c)->z = (a)->z + (b)->z;         \
-} while 0
+} while(0)
 
 #define sub_vectors(a, b, c) do {   \
   (c)->x = (a)->x - (b)->x;         \
   (c)->y = (a)->y - (b)->y;         \
   (c)->z = (a)->z - (b)->z;         \
-} while 0
+} while(0)
 
 #define add_to_vector(a, b) do {   \
   (a)->x += (b)->x;                \
   (a)->y += (b)->y;                \
   (a)->z += (b)->z;                \
-} while 0
+} while(0)
 
 #define sub_from_vector(a, b) do { \
   (a)->x -= (b)->x;                \
   (a)->y -= (b)->y;                \
   (a)->z -= (b)->z;                \
-} while 0
+} while(0)
 
 #define div_vectors(s, a, b) do {  \
   (b)->x = (a)->x / (s);           \
   (b)->y = (a)->y / (s);           \
   (b)->z = (a)->z / (s);           \
-} while 0
+} while(0)
 
 #define mul_vectors(s, a, b) do {  \
   (b)->x = (a)->x * (s);           \
   (b)->y = (a)->y * (s);           \
   (b)->z = (a)->z * (s);           \
-} while 0
+} while(0)
 
 #define div_vector(s, a) do {      \
   (a)->x /= (s);                   \
   (a)->y /= (s);                   \
   (a)->z /= (s);                   \
-} while 0
+} while(0)
 
 #define mul_vector(s, a) do {      \
   (a)->x *= (s);                   \
   (a)->y *= (s);                   \
   (a)->z *= (s);                   \
-} while 0
+} while(0)
 
 /**
  * @brief sine lookup table

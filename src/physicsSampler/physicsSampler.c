@@ -13,34 +13,32 @@
 #include "../globals.h"
 #include "physicsSampler.h"
 
-/* Originally declared in globals.h */
-extern volatile physicsModel g_model;
-extern volatile vectorQueue g_gyro_queue;
-extern volatile vectorQueue g_accel_queue;
-
 void start_sampler() {
+  imu_init_sampling();
+  
+  // PD3 has to be input and pullup to act as INT3
+  DDRD &= ~_BV(DDD3);
+  PORTD |= ~_BV(PORTD3);
+
   SREG |= _BV(SREG_I);
-  EIMSK &= ~_BV(INT0); /* Disable INT0 interrupts */
+  EIMSK &= ~_BV(INT3); /* Disable INT3 interrupts */
 
-  /* Rising edge of INT0 generates interrupt */
-  EICRA |= _BV(ISC01);
-  EICRA |= _BV(ISC00);
+  /* Rising edge of INT3 generates interrupt */
+  EICRA |= _BV(ISC31);
+  EICRA |= _BV(ISC30);
 
-  EIMSK |= _BV(INT0); /* Enable INT0 interrupts */
+  EIMSK |= _BV(INT3); /* Enable INT0 interrupts */
 }
 
 void stop_sampler() {
-  EIMSK &= ~_BV(INT0); /* Disable INT0 interrupts */
+  EIMSK &= ~_BV(INT3); /* Disable INT3 interrupts */
 }
 
-ISR(INT0_vect) {
+ISR(INT3_vect) {
   if(vq_free_space(&g_gyro_queue) < 10) {
-    SET_STATE(UPDATE);
+    STATE_SET(UPDATE);
   }
 
-  Vector angular = imu_get_angular();
-  vq_enqueue(&angular, &g_gyro_queue);
-
-  Vector accel = imu_get_acceleration();
-  vq_enqueue(&accel, &g_accel_queue));
+  vq_enqueue(imu_get_angular(), &g_gyro_queue);
+  vq_enqueue(imu_get_acceleration(), &g_accel_queue);
 }

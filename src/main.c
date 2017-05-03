@@ -10,8 +10,10 @@
 #include "physicsModel/physicsModel.h"
 #include "physicsSampler/physicsSampler.h"
 
-/* Originally declared in globals.h */
-extern volatile physicsModel g_model;
+volatile physicsModel g_model;
+volatile vectorQueue g_gyro_queue;
+volatile vectorQueue g_accel_queue;
+volatile state g_state;
 
 int main(void) {
   static physicsModel model;
@@ -22,14 +24,12 @@ int main(void) {
 
   imu_init();
 
-  model = g_model;
   calibrate_gyro(&model);
   g_model = model;
 
   start_sampler();
-
   for(;;) {
-      Vector orientation = g_model.orientation;
+      Vector orientation = g_model.gyro_ref;
       clearLCD();
       printCharToLCD('X', 0, 0);
       printIntToLCD(orientation.x, 0, 2);
@@ -39,6 +39,6 @@ int main(void) {
 
       printCharToLCD('Z', 1, 8);
       printIntToLCD(orientation.z, 1, 10);
-      _delay_ms(100);
+      _delay_ms(1000);
   }
 }

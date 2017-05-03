@@ -33,7 +33,7 @@ typedef struct ddiBuffer32 {
   Vector32 sample_stream[DDI_SAMPLE_STREAM_SIZE]; /**> Holds three measurements */
   Vector32 I1; /**> last integration value */
   Vector32 I2; /**> last double integration value */
-} ddiBuffer;
+} ddiBuffer32;
 
 /**
  * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions

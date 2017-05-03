@@ -8,6 +8,9 @@
 #ifndef GLOBALS_H_
 #define GLOBALS_H_
 
+#include <vectorQueue.h>
+#include "physicsModel/physicsModel.h"
+
 /**
  * Global variable for storing model state.
  * Initialize once without extern.
@@ -33,17 +36,17 @@ typedef struct state {
 } state;
 
 #define STATE_SET(s) do {                                       \
-                          state.last = state.current;           \
-                          state.current = (s);                  \
+                          g_state.last = g_state.current;           \
+                          g_state.current = (s);                  \
                         } while(0)
 
 #define STATE_RETURN() do {                                     \
-                            uint8_t _current = state.current;   \
-                            state.current = state.last;         \
-                            state.last = _current;              \
+                            uint8_t _current = g_state.current;   \
+                            g_state.current = state.last;         \
+                            g_state.last = _current;              \
                           } while(0)
 
-volatile state g_state;
+extern volatile state g_state;
 
 #define MENU 0
 #define UPDATE 1
