@@ -9,11 +9,16 @@
 #define PHYSICS_MODEL_H_
 
 #include <vectorMaths.h>
+#include "../imuCommunication/imuCommunication.h"
 
 #define CALIBRATION_ITERATIONS 2048
 #define AVERAGING_BUFFER_SIZE 11 /* must be >= lg of iterations but lg is expensive! */
 
+#define ANGULAR_DETECTION_TRESHOLD 200
 #define DDI_SAMPLE_STREAM_SIZE 3
+
+/* amount of orientation units per degree: (imu_sample_rate * int16_max / gyro_deg_s) */
+#define ORIENTATION_UNITS_DEG 13114
 
 /**
  * @brief The ddiBuffer stores the necessary values to filter out drift by double derivation and integration on the fly
@@ -94,15 +99,26 @@ void normalize_accel(Vector* accel, Vector* ref);
 void normalize_angular(Vector* angular, physicsModel* model);
 
 /**
- * @brief adjusts orientation vector according to new measurement
+ * @brief sets up queues for processing and updates model parts
+ * @param queues pointer to queues
  * @param model pointer to model
  */
-void update_model_orientation(physicsModel* model);
+void update_model(imuQueues* queues, physicsModel* model);
 
 /**
- * @brief adjusts position vector according to new measurement
+ * @brief adjusts orientation vector according to queues
+ *        (assumes processing and sampling queues are already swapped)
+ * @param queues pointer to queues
+ * @param model pointer to model
+ */
+void update_model_orientation(imuQueues* queues, physicsModel* model);
+
+/**
+ * @brief adjusts position vector according to queues
+ *        (assumes processing and sampling queues are already swapped)
+ * @param queues pointer to queues
  * @param model pointer to model Vector
  */
-void update_model_position(physicsModel* model);
+void update_model_position(imuQueues* queues, physicsModel* model);
 
 #endif

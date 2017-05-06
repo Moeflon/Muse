@@ -13,12 +13,17 @@
 /** Allocated size of queue */
 #define VECTOR_QUEUE_MAX_SIZE 64
 
+/** Amount of values to average together per new value in averaged queue */
+#define QUEUE_AVERAGING_TRESHOLD 16
+#define QUEUE_AVERAGING_BLOCK_SIZE 4
+
 /**
  * @brief struct containing queue length and array
  */
 typedef struct vectorQueue {
   Vector queue[VECTOR_QUEUE_MAX_SIZE]; /**> queue array */
   uint8_t size; /**> current queue size */
+  uint8_t last_block_size; /**> size mod QUEUE_AVERAGING_BLOCK_SIZE (after averaging) */
 } vectorQueue;
 
 /**
@@ -38,17 +43,25 @@ uint8_t vq_enqueue(Vector v, vectorQueue* q);
 uint8_t vq_free_space(vectorQueue* q);
 
 /**
- * @brief Returns copy of given queue
- * @param q pointer to vectorqueue to copy
- * @return new vectorQueue
+ * @brief swaps memory locations of vectorqueues
+ * @param a operand
+ * @param b operand
  */
-vectorQueue vq_copy(vectorQueue* q);
+void vq_swap(vectorQueue** a, vectorQueue** b);
 
 /**
- * @brief Returns copy of given queue and resets it
- * @param q pointer to vectorqueue to move
- * @return vectorqueue
+ * @brief sets size of vectorqueue to zero
+ * @param q vectorqueue to clear
  */
-vectorQueue vq_move(vectorQueue* q);
+void vq_clear(vectorQueue* q);
 
+/**
+ * @brief Averages queue into new smaller queue. Averages QUEUE_AVERAGING_BLOCK_SIZE
+ *        values per new value. Also sets the last_block_size field in the struct.
+ *        Only averages if amount of values in queue exceeds QUEUE_AVERAGING_TRESHOLD
+ * @param q vectorqueue to average
+ * @retval 0 averaged
+ * @retval 1 didn't average
+ */
+uint8_t vq_average(vectorQueue* q);
 #endif

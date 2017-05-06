@@ -9,7 +9,6 @@
 #include <util/delay.h>
 #include <vectorMaths.h>
 
-#include "../imuCommunication/imuCommunication.h"
 #include "physicsModel.h"
 
 Vector streamed_calibration_average(Vector (*data_provider)(void)) {
@@ -108,17 +107,44 @@ void ddi32(Vector32* new_sample, ddiBuffer32* buffer) {
 void normalize_angular(Vector* angular, physicsModel* model) {
   /* Remove the reference so stationary would be 0, 0, 0 */
   sub_from_vector(angular, &model->gyro_ref);
+
+    /* Really small angular velocities should be 0 */
+    if(abs(angular->x) < ANGULAR_DETECTION_TRESHOLD
+    && abs(angular->y) < ANGULAR_DETECTION_TRESHOLD
+    && abs(angular->z) < ANGULAR_DETECTION_TRESHOLD) {
+      clear_vector(angular);
+    }
 }
 
-void update_model_orientation(physicsModel* model) {
-  Vector angular = imu_get_angular();
-  normalize_angular(&angular, model);
+void update_model(imuQueues* queues, physicsModel* model) {
+    /* Clear processing queues for use as sampling queues */
+    vq_clear(queues->gyro_processing_ptr);
+    vq_clear(queues->accel_processing_ptr);
 
-  //coord_transform(&angular, ANGULAR_SCALE, &model->orientation, ANGLE_SCALE);
+    /* Sampling queues to processing, new sampling queues */
+    vq_swap(&queues->gyro_processing_ptr, &queues->gyro_sample_ptr);
+    vq_swap(&queues->accel_processing_ptr, &queues->accel_sample_ptr);
 
-  /* trapezoid rule integration */
-  //add_vector(&angular, &model->prev_angular, &model->prev_angular);
-  //div_scal_vector(2, &model->prev_angular, &model->prev_angular);
-  //add_vector(&model->orientation, &model->prev_angular, &model->orientation);
+    /* Update model parts */
+    update_model_orientation(queues, model);
+    update_model_position(queues, model);
+}
+
+void update_model_orientation(imuQueues* queues, physicsModel* model) {
+  vectorQueue* q = queues->gyro_processing_ptr;
+
+  for(int i = 0; i < q->size; i++) {
+    normalize_angular(&q->queue[i], model);
+
+    //Vector orientation_deg;
+    //div_vectors(ORIENTATION_UNITS_DEG, &model->orientation, &orientation_deg);
+
+    coord_transform_f(&q->queue[i], &model->orientation);
+    add_to_vector(&model->orientation, &q->queue[i]);
+  }
+
+}
+
+void update_model_position(imuQueues* queues, physicsModel* model) {
 
 }

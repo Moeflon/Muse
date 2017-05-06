@@ -13,19 +13,14 @@
 
 /**
  * Global variable for storing model state.
- * Initialize once without extern.
- * Reference in other files with 'extern volatile physicsModel g_model'.
- * Is volatile because it is altered in interrupts. And can thus change outside of the normal flow of execution, making
- * certain optimizations dangerous. Volatile refrains the compiler from applying these optimizations.
  */
 extern volatile physicsModel g_model;
 
 /**
- * Global variables for vectorQueue fifo buffer
- * Reference in other files like before
+ * Global variables for queues
  */
-extern volatile vectorQueue g_gyro_queue;
-extern volatile vectorQueue g_accel_queue;
+
+extern volatile imuQueues g_queues;
 
 /**
  * Global variables and definitions for application state

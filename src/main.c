@@ -11,8 +11,7 @@
 #include "physicsSampler/physicsSampler.h"
 
 volatile physicsModel g_model;
-volatile vectorQueue g_gyro_queue;
-volatile vectorQueue g_accel_queue;
+volatile imuQueues g_queues;
 volatile state g_state;
 
 int main(void) {
@@ -28,8 +27,12 @@ int main(void) {
   g_model = model;
 
   start_sampler();
+  Vector32 orientation;
   for(;;) {
-      Vector orientation = g_model.gyro_ref;
+      update_model(&g_queues, &g_model);
+      orientation = g_model.orientation;
+      div_vector(ORIENTATION_UNITS_DEG, &orientation);
+
       clearLCD();
       printCharToLCD('X', 0, 0);
       printIntToLCD(orientation.x, 0, 2);
@@ -39,6 +42,6 @@ int main(void) {
 
       printCharToLCD('Z', 1, 8);
       printIntToLCD(orientation.z, 1, 10);
-      _delay_ms(1000);
+      _delay_ms(10);
   }
 }

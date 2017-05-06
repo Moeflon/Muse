@@ -28,6 +28,12 @@ typedef struct Vector32 {
   int32_t z; /**> z component */
 } Vector32;
 
+#define clear_vector(a) do {        \
+  (a)->x = 0;                       \
+  (a)->y = 0;                       \
+  (a)->z = 0;                       \
+} while(0)
+
 #define add_vectors(a, b, c) do {   \
   (c)->x = (a)->x + (b)->x;         \
   (c)->y = (a)->y + (b)->y;         \
@@ -77,31 +83,13 @@ typedef struct Vector32 {
 } while(0)
 
 /**
- * @brief sine lookup table
- */
-extern const uint8_t sin_table[91];
-
-/**
- * @brief Returns sin from lookuptable, fixed point multiplied by 100
- * @param degrees
- * @return sine multiplied by 100
- */
-int8_t sin100(int16_t degrees);
-
-/**
- * @brief Returns cos from lookuptable, fixed point multiplied by 100
- * @param degrees
- * @return cosine multiplied by 100
- */
-int8_t cos100(int16_t degrees);
-
-/**
  * @brief adjusts given vector according to orientation vector such that axes are correct
  * @param measured pointer to measurment vector
- * @param m_scale number of measurement units are one physical unit (be careful for overflow)
- * @param orientation pointer to ortientation vector
- * @param o_scale number of orientation units are one physical unit (be careful for overflow)
+ * @param orientation pointer to ortientation vector (in degrees)
  */
-void coord_transform(Vector* measurement, int16_t m_scale,  Vector* orientation, int16_t o_scale);
+void coord_transform(Vector* measurement,  Vector* orientation);
+
+void coord_transform_f(Vector* measurement,  Vector32* orientation);
+
 
 #endif
