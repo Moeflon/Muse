@@ -134,15 +134,18 @@ void update_model_orientation(imuQueues* queues, physicsModel* model) {
   vectorQueue* q = queues->gyro_processing_ptr;
 
   for(int i = 0; i < q->size; i++) {
-    normalize_angular(&q->queue[i], model);
+    Vector* val = &q->queue[i];
+    normalize_angular(val, model);
+    div_vector(2 * IMU_SAMPLE_RATE, val);
 
-    //Vector orientation_deg;
-    //div_vectors(ORIENTATION_UNITS_DEG, &model->orientation, &orientation_deg);
+    /* Integrate Quaternion rate */
+    Quaternion32 measurement = {0, val->x, val->y, val->z};
+    mul_quat(&measurement, &model->orientation);
+    add_to_quat(&model->orientation, &measurement);
 
-    coord_transform_f(&q->queue[i], &model->orientation);
-    add_to_vector(&model->orientation, &q->queue[i]);
+    /* Normalize orientation */
+    normalize_quat(&model->orientation);
   }
-
 }
 
 void update_model_position(imuQueues* queues, physicsModel* model) {

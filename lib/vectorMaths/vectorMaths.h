@@ -28,6 +28,15 @@ typedef struct Vector32 {
   int32_t z; /**> z component */
 } Vector32;
 
+/**
+ * @brief A floating point three-dimensional vector
+ */
+typedef struct Vectorf {
+  int32_t x; /**> x component */
+  int32_t y; /**> y component */
+  int32_t z; /**> z component */
+} Vectorf;
+
 #define clear_vector(a) do {        \
   (a)->x = 0;                       \
   (a)->y = 0;                       \

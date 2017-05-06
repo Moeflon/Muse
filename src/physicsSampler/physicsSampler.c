@@ -36,6 +36,9 @@ void start_sampler() {
   g_queues.accel_processing_ptr = &g_queues.four;
   vq_clear(g_queues.gyro_sample_ptr);
   vq_clear(g_queues.accel_sample_ptr);
+
+  /* Initialize orientation quaternion */
+  g_model.orientation.w = 1;
 }
 
 void stop_sampler() {
