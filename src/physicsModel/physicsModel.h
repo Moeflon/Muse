@@ -9,6 +9,7 @@
 #define PHYSICS_MODEL_H_
 
 #include <vectorMaths.h>
+#include <quaternionMaths.h>
 #include "../imuCommunication/imuCommunication.h"
 
 #define CALIBRATION_ITERATIONS 2048
@@ -44,7 +45,7 @@ typedef struct ddiBuffer32 {
  * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions
  */
 typedef struct physicsModel {
-  Vector32 orientation; /**> orientation vector */
+  Quaternion32 orientation; /**> orientation vector */
   Vector position; /**> position vector */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */

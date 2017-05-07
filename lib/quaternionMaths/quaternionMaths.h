@@ -1,47 +1,119 @@
 /**
- * @file quaternionMath.c
+ * @file vectorMaths.h
+ * @brief Quaternion operation definitions
  * @author Vic Degraeve
  * @author Victor-Louis De Gusseme
  */
 
-#include <math.h>
-#include "quaternionMath.h"
+#ifndef QUATERNION_MATHS_H_
+#define QUATERNION_MATHS_H_
 
-float quat_norm(Quaternion32* q) {
-  return sqrtf(w*w + x*x + y*y + z*z);
-}
+#include <stdint.h>
+#include <vectorMaths.h>
 
-void normalize_quat(Quaternion32* q) {
-  float norm = quat_norm(q);
-  q->w /= norm;
-  q->x /= norm;
-  q->y /= norm;
-  q->z /= norm;
-}
+/**
+ * @brief A quaternion
+ */
+typedef struct Quaternion32 {
+  float w; /**> z component */
+  float x; /**> x component */
+  float y; /**> y component */
+  float z; /**> z component */
+} Quaternion32;
 
-Vectorf quat_to_euler(Quaternion* q) {
-  Vectorf euler;
+#define clear_quat(a) do {              \
+  (a)->w = 0;                           \
+  (a)->x = 0;                           \
+  (a)->y = 0;                           \
+  (a)->z = 0;                           \
+} while(0)
 
-  float test = q->x * q->y + q->z * q->w;
-	if(test > 0.499) { /* singularity at north pole */
-		euler.x = 2 * atan2(q->x, q->w);
-		euler.y = HALF_PI;
-		euler.z = 0;
-	}
-	else if(test < -0.499) { /* singularity at south pole */
-		euler.x = -2 * atan2(q->x, q->w);
-		euler.x = -HALF_PI;
-		euler.x = 0;
-	}
-  else {
-    float sqx = q->x * q->x;
-    float sqy = q->y * q->y;
-    float sqz = q->z * q->z;
+#define add_quats(a, b, c) do {         \
+  (c)->w = (a)->w + (b)->w;             \
+  (c)->x = (a)->x + (b)->x;             \
+  (c)->y = (a)->y + (b)->y;             \
+  (c)->z = (a)->z + (b)->z;             \
+} while(0)
 
-    euler.x = atan2(2*q->y * q->w - 2*q->x * q->z, 1 - 2*sqy - 2*sqz);
-    euler.y = asin(2*test);
-    euler.z = atan2(2*q->x * q->w - 2*q->y * q-?z , 1 - 2*sqx - 2*sqz);
-  }
-  
-  return euler;
-}
+#define sub_quats(a, b, c) do {         \
+  (c)->w = (a)->w - (b)->w;             \
+  (c)->x = (a)->x - (b)->x;             \
+  (c)->y = (a)->y - (b)->y;             \
+  (c)->z = (a)->z - (b)->z;             \
+} while(0)
+
+#define add_to_quat(a, b) do {          \
+  (a)->w += (b)->w;                     \
+  (a)->x += (b)->x;                     \
+  (a)->y += (b)->y;                     \
+  (a)->z += (b)->z;                     \
+} while(0)
+
+#define sub_from_quat(a, b) do {        \
+  (a)->w -= (b)->w;                     \
+  (a)->x -= (b)->x;                     \
+  (a)->y -= (b)->y;                     \
+  (a)->z -= (b)->z;                     \
+} while(0)
+
+#define div_scal_quats(s, a, b) do {    \
+  (b)->w = (a)->w / (s);                \
+  (b)->x = (a)->x / (s);                \
+  (b)->y = (a)->y / (s);                \
+  (b)->z = (a)->z / (s);                \
+} while(0)
+
+#define mul_scal_quats(s, a, b) do {    \
+  (b)->w = (a)->w * (s);                \
+  (b)->x = (a)->x * (s);                \
+  (b)->y = (a)->y * (s);                \
+  (b)->z = (a)->z * (s);                \
+} while(0)
+
+#define div_scal_quat(s, a) do {        \
+  (a)->w /= (s);                        \
+  (a)->x /= (s);                        \
+  (a)->y /= (s);                        \
+  (a)->z /= (s);                        \
+} while(0)
+
+#define mul_scal_quat(s, a) do {        \
+  (a)->w *= (s);                        \
+  (a)->x *= (s);                        \
+  (a)->y *= (s);                        \
+  (a)->z *= (s);                        \
+} while(0)
+#endif
+
+#define mul_quats(a, b, c) do {                                                                           \
+  (c)->w = ((a)->w * (b)->w) - ((a)->x * (b)->x) - ((a)->y * (b)->y) - ((a)->z * (b)->z);                 \
+  (c)->x = ((a)->w * (b)->x) + ((a)->x * (b)->w) + ((a)->y * (b)->z) - ((a)->z * (b)->y);                 \
+  (c)->y = ((a)->w * (b)->y) - ((a)->x * (b)->z) + ((a)->y * (b)->w) + ((a)->z * (b)->x);                 \
+  (c)->z = ((a)->w * (b)->z) - ((a)->x * (b)->y) + ((a)->y * (b)->x) + ((a)->z * (b)->w);                 \
+} while(0)
+
+#define mul_quat(a, b) do {                                                                               \
+  (a)->w = ((a)->w * (b)->w) - ((a)->x * (b)->x) - ((a)->y * (b)->y) - ((a)->z * (b)->z);                 \
+  (a)->x = ((a)->w * (b)->x) + ((a)->x * (b)->w) + ((a)->y * (b)->z) - ((a)->z * (b)->y);                 \
+  (a)->y = ((a)->w * (b)->y) - ((a)->x * (b)->z) + ((a)->y * (b)->w) + ((a)->z * (b)->x);                 \
+  (a)->z = ((a)->w * (b)->z) - ((a)->x * (b)->y) + ((a)->y * (b)->x) + ((a)->z * (b)->w);                 \
+} while(0)
+
+/**
+ * @brief Normalizes given quaternion
+ * @param q quaternion
+ */
+float quat_norm(Quaternion32* q);
+
+/**
+ * @brief Normalizes given quaternion
+ * @param q quaternion
+ */
+void normalize_quat(Quaternion32* q);
+
+/**
+ * @brief Converts quaternion to euler angles
+ * @param q quaternion
+ * @return Floating point vector containing euler angles
+ */
+Vectorf quat_to_euler(Quaternion32* q);

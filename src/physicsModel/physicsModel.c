@@ -136,11 +136,13 @@ void update_model_orientation(imuQueues* queues, physicsModel* model) {
   for(int i = 0; i < q->size; i++) {
     Vector* val = &q->queue[i];
     normalize_angular(val, model);
-    div_vector(2 * IMU_SAMPLE_RATE, val);
 
     /* Integrate Quaternion rate */
     Quaternion32 measurement = {0, val->x, val->y, val->z};
-    mul_quat(&measurement, &model->orientation);
+    /* Dienen 1311 = int16_max / 1000 (dus aantal val per deg/s) en dan nog
+       maal 40 ma geen idee waarom, ma alleen zo klopten de waarden een beetje */
+    div_scal_quat((int32_t)2 * IMU_SAMPLE_RATE * 1311, &measurement);
+    mul_quats(&model->orientation, &measurement, &measurement);
     add_to_quat(&model->orientation, &measurement);
 
     /* Normalize orientation */
