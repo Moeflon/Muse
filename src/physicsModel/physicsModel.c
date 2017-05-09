@@ -149,12 +149,12 @@ void update_model_orientation(imuQueues* queues, physicsModel* model) {
   for(int i = 0; i < q->size; i++) {
     normalize_angular(&q->queue[i], model);
     normalize_accel(&p->queue[i], model);
-    coord_transform_f(&q->queue[i], &model->orientation);
+    coord_transform(&q->queue[i], &model->orientation);
 
     // Only complement orientation with accel data when linear acceleration is small
     if(vector_norm_squared(&p->queue[i]) < model->gravity_norm_squared + 500){
-      complement_orientation(&model->orientation, &p->queue[i]);
-      PORTA = 1;
+      // complement_orientation(&model->orientation, &p->queue[i]);
+      PORTA = 1; // check to see whether complement filter is active
     } else {
       PORTA = 0;
     }

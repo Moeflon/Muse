@@ -87,7 +87,7 @@ typedef struct Vector32 {
  * @param measured pointer to measurment vector
  * @param orientation pointer to ortientation vector (in degrees)
  */
-void coord_transform(Vector* measurement,  Vector* orientation);
+void coord_transform(Vector* measurement,  Vector32* orientation);
 
 void coord_transform_f(Vector* measurement,  Vector32* orientation);
 
