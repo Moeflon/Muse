@@ -91,5 +91,7 @@ void coord_transform(Vector* measurement,  Vector* orientation);
 
 void coord_transform_f(Vector* measurement,  Vector32* orientation);
 
+int32_t vector_norm_squared(Vector* v);
+
 
 #endif

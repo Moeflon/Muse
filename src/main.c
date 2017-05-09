@@ -24,6 +24,7 @@ int main(void) {
   imu_init();
 
   calibrate_gyro(&model);
+  calibrate_accel(&model); // TODO fix this, currently it crashes the dwenguino
   g_model = model;
 
   start_sampler();

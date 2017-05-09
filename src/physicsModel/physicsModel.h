@@ -14,7 +14,7 @@
 #define CALIBRATION_ITERATIONS 2048
 #define AVERAGING_BUFFER_SIZE 11 /* must be >= lg of iterations but lg is expensive! */
 
-#define ANGULAR_DETECTION_TRESHOLD 200
+#define ANGULAR_DETECTION_TRESHOLD 50
 #define DDI_SAMPLE_STREAM_SIZE 3
 
 /* amount of orientation units per degree: (imu_sample_rate * int16_max / gyro_deg_s) */
@@ -48,6 +48,7 @@ typedef struct physicsModel {
   Vector position; /**> position vector */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */
+  int32_t gravity_norm_squared; /**> vector norm of gravity squared */
 } physicsModel;
 
 /**
@@ -87,9 +88,9 @@ void ddi(Vector* new_sample, ddiBuffer* buffer);
 /**
  * @brief normalizes measurement Vector according to reference
  * @param accel pointer to Vector containing measurement
- * @param ref pointer to Vector containing reference
+ * @param
  */
-void normalize_accel(Vector* accel, Vector* ref);
+void normalize_accel(Vector* accel, physicsModel* model);
 
 /**
  * @brief normalizes measurement Vector according to reference and applies ddi
@@ -117,8 +118,15 @@ void update_model_orientation(imuQueues* queues, physicsModel* model);
  * @brief adjusts position vector according to queues
  *        (assumes processing and sampling queues are already swapped)
  * @param queues pointer to queues
- * @param model pointer to model Vector
+ * @param model pointer to physicsModel model
  */
 void update_model_position(imuQueues* queues, physicsModel* model);
+
+/**
+ * @brief updates pitch & roll with accelerometer data to eliminate drift
+ * @param pointer to an orientation
+ * @param Vector pointer to Vector acceleration
+ */
+void complement_orientation(Vector32* orientation, Vector* acceleration);
 
 #endif
