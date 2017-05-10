@@ -39,7 +39,7 @@ int8_t cos100(int16_t degrees);
  * @param degrees
  * @return sine multiplied by 1000000
  */
-int32_t sin_xl(int32_t angle);
+int32_t sin_xl(int16_t angle);
 
 /**
  * @brief Returns cos from lookuptable, fixed point multiplied by 1000000

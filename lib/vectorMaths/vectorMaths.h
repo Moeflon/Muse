@@ -64,6 +64,30 @@ typedef struct Vector32 {
   (b)->z = (a)->z / (s);           \
 } while(0)
 
+#define shl_vectors(s, a, b) do {  \
+  (b)->x = (a)->x << (s);          \
+  (b)->y = (a)->y << (s);          \
+  (b)->z = (a)->z << (s);          \
+} while(0)
+
+#define shr_vectors(s, a, b) do {  \
+  (b)->x = (a)->x >> (s);          \
+  (b)->y = (a)->y >> (s);          \
+  (b)->z = (a)->z >> (s);          \
+} while(0)
+
+#define shl_vector(s, a) do {  \
+  (a)->x = (a)->x << (s);         \
+  (a)->y = (a)->y << (s);         \
+  (a)->z = (a)->z << (s);         \
+} while(0)
+
+#define shr_vector(s, a) do {  \
+  (a)->x = (a)->x >> (s);          \
+  (a)->y = (a)->y >> (s);          \
+  (a)->z = (a)->z >> (s);          \
+} while(0)
+
 #define mul_vectors(s, a, b) do {  \
   (b)->x = (a)->x * (s);           \
   (b)->y = (a)->y * (s);           \

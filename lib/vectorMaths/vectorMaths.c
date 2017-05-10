@@ -14,7 +14,7 @@ int32_t vector_norm_squared(Vector* v){
 
 void coord_transform(Vector* measurement,  Vector32* orientation) {
     //int32_t cos_a = cos_xl(orientation->x);
-    if(orientation->y < 0 || orientation->y > 2360520){
+    if(orientation->y <= 0 || orientation->y <= 2360520){
         orientation->y = 590000;
     }
     int32_t cos_b = cos_xl(orientation->y);

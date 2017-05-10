@@ -39,8 +39,8 @@ Vector streamed_calibration_average(Vector (*data_provider)(void)) {
     /* Merge same degrees */
     while(tail > 0 && degrees[tail - 1] == degrees[tail]) {
       /* Divide averaging values by two first for overflow protection */
-      div_vector(2, averages + tail);
-      div_vector(2, averages + tail - 1);
+      shr_vector(1, averages + tail);
+      shr_vector(1, averages + tail - 1);
 
       /* Adds the last two vectors together and stores it in the second last location */
       add_to_vector(averages + tail - 1, averages + tail);
@@ -73,40 +73,6 @@ void calibrate_accel(physicsModel* model) {
 
 // temp
      model->gravity_norm_squared = 70000000;
-}
-
-void init_ddi_buffer32(ddiBuffer32* buffer, Vector32 (*data_provider)()) {
-    for(int i = 0; i < DDI_SAMPLE_STREAM_SIZE; i++) {
-      buffer->sample_stream[i] = data_provider();
-    }
-}
-
-void ddi32(Vector32* new_sample, ddiBuffer32* buffer) {
-  /* Shift stream values one to the left */
-  memcpy(buffer->sample_stream, buffer->sample_stream + 1, (DDI_SAMPLE_STREAM_SIZE - 1) * sizeof(buffer->sample_stream[0]));
-
-  /* Last stream value is new sample */
-  buffer->sample_stream[DDI_SAMPLE_STREAM_SIZE - 1] = *new_sample;
-
-  /*
-   * Caluclate second derivative and save it in first array slot as we will not need this one in the future
-   * @see http://web.stanford.edu/~fringer/teaching/numerical_methods_02/handouts/lecture4.pdf Formula (30)
-   */
-  /* Add last value to first one */
-  add_to_vector(&buffer->sample_stream[0], &buffer->sample_stream[DDI_SAMPLE_STREAM_SIZE - 1]);
-
-  /* Subtract middle vector from first one twice */
-  sub_from_vector(&buffer->sample_stream[0], &buffer->sample_stream[1]);
-  sub_from_vector(&buffer->sample_stream[0], &buffer->sample_stream[1]);
-
-  /* Add second derivative to I1 */
-  add_to_vector(&buffer->I1, &buffer->sample_stream[0]);
-
-  /* Add I1 to I2 */
-  add_to_vector(&buffer->I2, &buffer->I1);
-
-  /* adjusted sample = I2 */
-  new_sample = &buffer->I2;
 }
 
 void normalize_angular(Vector* angular, physicsModel* model) {
@@ -149,15 +115,15 @@ void update_model_orientation(imuQueues* queues, physicsModel* model) {
   for(int i = 0; i < q->size; i++) {
     normalize_angular(&q->queue[i], model);
     normalize_accel(&p->queue[i], model);
-    coord_transform(&q->queue[i], &model->orientation);
+    //coord_transform(&q->queue[i], &model->orientation);
 
     // Only complement orientation with accel data when linear acceleration is small
-    if(vector_norm_squared(&p->queue[i]) < model->gravity_norm_squared + 500){
+    /*if(vector_norm_squared(&p->queue[i]) < model->gravity_norm_squared + 500){
       // complement_orientation(&model->orientation, &p->queue[i]);
       PORTA = 1; // check to see whether complement filter is active
     } else {
       PORTA = 0;
-    }
+    }*/
 
     add_to_vector(&model->orientation, &q->queue[i]);
   }

@@ -5,6 +5,7 @@
  */
 
 #include "trig.h"
+#include <avr/io.h>
 
 const uint8_t sin_table[91] = {
 	0,   /*    sin(0 degrees) * 100    */
@@ -1124,7 +1125,7 @@ const int32_t sin_table_xl[1001] = {
 		1000000, /* index: 1000 */
 };
 
-int32_t sin_xl(int32_t angle) {
+int32_t sin_xl(int16_t angle) {
 	int sign = 1;
 	if(angle < 0) {
 		angle = -angle;
@@ -1138,8 +1139,10 @@ int32_t sin_xl(int32_t angle) {
 		sign = -1;
 	}
 
-	uint16_t index = angle/1180; // this breaks the program
-	return sign * sin_table_xl[index];
+	angle /= 1180; // this breaks the program
+  DDRA = 0xFF;
+  PORTA = 1;
+	return sign * sin_table_xl[angle];
 }
 
 int32_t cos_xl(int32_t angle) {

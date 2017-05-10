@@ -17,28 +17,8 @@
 #define ANGULAR_DETECTION_TRESHOLD 50
 #define DDI_SAMPLE_STREAM_SIZE 3
 
-/* amount of orientation units per degree: (imu_sample_rate * int16_max / gyro_deg_s) */
-#define ORIENTATION_UNITS_DEG 13114
-
-/**
- * @brief The ddiBuffer stores the necessary values to filter out drift by double derivation and integration on the fly
- * @see http://www.mdpi.com/1424-8220/14/12/23230/htm#DigitalFilteringProtocol
- */
-typedef struct ddiBuffer {
-  Vector sample_stream[DDI_SAMPLE_STREAM_SIZE]; /**> Holds three measurements */
-  Vector I1; /**> last integration value */
-  Vector I2; /**> last double integration value */
-} ddiBuffer;
-
-/**
- * @brief The ddiBuffer stores the necessary values to filter out drift by double derivation and integration on the fly
- * @see http://www.mdpi.com/1424-8220/14/12/23230/htm#DigitalFilteringProtocol
- */
-typedef struct ddiBuffer32 {
-  Vector32 sample_stream[DDI_SAMPLE_STREAM_SIZE]; /**> Holds three measurements */
-  Vector32 I1; /**> last integration value */
-  Vector32 I2; /**> last double integration value */
-} ddiBuffer32;
+/* amount to shift orientation right to get degrees * 10 */
+#define ORIENTATION_DEG_10_SHR 10
 
 /**
  * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions
@@ -69,21 +49,6 @@ void calibrate_accel(physicsModel* model);
  * @param model pointer to model to calibrate
  */
 void calibrate_gyro(physicsModel* model);
-
-/**
- * @brief initializes ddi buffer with given vector of values
- * @param buffer pointer to ddiBuffer struct
- * @param data_provider function pointer to function returning vectors to be averaged
- */
-void init_ddi_buffer(ddiBuffer* buffer, Vector (*data_provider)(void));
-
-/**
- * @brief Removes the drift from new sample value using buffered values and adjusts buffers for further use
- * @see http://www.mdpi.com/1424-8220/14/12/23230/htm#DigitalFilteringProtocol
- * @param new_sample new sample to undrift
- * @param buffer pointer to ddiBuffer struct
- */
-void ddi(Vector* new_sample, ddiBuffer* buffer);
 
 /**
  * @brief normalizes measurement Vector according to reference
