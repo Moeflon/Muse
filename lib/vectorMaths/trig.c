@@ -1137,7 +1137,8 @@ int32_t sin_xl(int32_t angle) {
 		angle -= 2360520;
 		sign = -1;
 	}
-	int index = angle/1180; // this breaks the program
+
+	uint16_t index = angle/1180; // this breaks the program
 	return sign * sin_table_xl[index];
 }
 
