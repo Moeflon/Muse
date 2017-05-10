@@ -12,8 +12,8 @@
 #define GYRO_DEG_S 1000
 #define ACCEL_MODE 1 /* 4g/s, see datasheet */
 #define ACCEL_G_S 4
-#define IMU_SAMPLE_RATE 400 /* sample rate of imu in herz */
-#define IMU_SAMPLE_RATE_DIVIDER 19 /* Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV), GOR is 8kHz in default filtering, so 19 gives 400Hz */
+#define IMU_SAMPLE_RATE 312 /* sample rate of imu in herz */
+#define IMU_SAMPLE_RATE_DIVIDER 25 /* Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV), GOR is 8kHz in default filtering */
 
 #include <vectorQueue.h>
 #include <stdint.h>

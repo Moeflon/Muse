@@ -24,6 +24,7 @@ int main(void) {
   imu_init();
 
   calibrate_gyro(&model);
+  calibrate_accel(&model); // TODO fix this, currently it crashes the dwenguino
   g_model = model;
 
   start_sampler();
@@ -31,7 +32,8 @@ int main(void) {
   for(;;) {
       update_model(&g_queues, &g_model);
       orientation = g_model.orientation;
-      div_vector(ORIENTATION_UNITS_DEG, &orientation);
+      shr_vector(10, &orientation);
+      div_vector(10, &orientation);
 
       clearLCD();
       printCharToLCD('X', 0, 0);

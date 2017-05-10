@@ -1,4 +1,4 @@
-/**
+  /**
  * @file physicsSampler.h
  * @brief Declares functions to sample accelerometer & gyro data
  * @author Vic Degraeve

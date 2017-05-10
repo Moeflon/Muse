@@ -39,8 +39,8 @@ Vector streamed_calibration_average(Vector (*data_provider)(void)) {
     /* Merge same degrees */
     while(tail > 0 && degrees[tail - 1] == degrees[tail]) {
       /* Divide averaging values by two first for overflow protection */
-      div_vector(2, averages + tail);
-      div_vector(2, averages + tail - 1);
+      shr_vector(1, averages + tail);
+      shr_vector(1, averages + tail - 1);
 
       /* Adds the last two vectors together and stores it in the second last location */
       add_to_vector(averages + tail - 1, averages + tail);
@@ -61,47 +61,18 @@ Vector streamed_calibration_average(Vector (*data_provider)(void)) {
   return averages[0];
 }
 
-void calibrate_accel(physicsModel* model) {
-
-}
-
 void calibrate_gyro(physicsModel* model) {
   _delay_ms(600); /* debounce */
   model->gyro_ref = streamed_calibration_average(imu_get_angular);
 }
 
-void init_ddi_buffer32(ddiBuffer32* buffer, Vector32 (*data_provider)()) {
-    for(int i = 0; i < DDI_SAMPLE_STREAM_SIZE; i++) {
-      buffer->sample_stream[i] = data_provider();
-    }
-}
+void calibrate_accel(physicsModel* model) {
+//  model->accel_ref = streamed_calibration_average(imu_get_acceleration);
+//  model->gravity_norm_squared = vector_norm_squared(&model->accel_ref);
+//  model->accel_ref.z = (model->accel_ref.x + model->accel_ref.y)/2;
 
-void ddi32(Vector32* new_sample, ddiBuffer32* buffer) {
-  /* Shift stream values one to the left */
-  memcpy(buffer->sample_stream, buffer->sample_stream + 1, (DDI_SAMPLE_STREAM_SIZE - 1) * sizeof(buffer->sample_stream[0]));
-
-  /* Last stream value is new sample */
-  buffer->sample_stream[DDI_SAMPLE_STREAM_SIZE - 1] = *new_sample;
-
-  /*
-   * Caluclate second derivative and save it in first array slot as we will not need this one in the future
-   * @see http://web.stanford.edu/~fringer/teaching/numerical_methods_02/handouts/lecture4.pdf Formula (30)
-   */
-  /* Add last value to first one */
-  add_to_vector(&buffer->sample_stream[0], &buffer->sample_stream[DDI_SAMPLE_STREAM_SIZE - 1]);
-
-  /* Subtract middle vector from first one twice */
-  sub_from_vector(&buffer->sample_stream[0], &buffer->sample_stream[1]);
-  sub_from_vector(&buffer->sample_stream[0], &buffer->sample_stream[1]);
-
-  /* Add second derivative to I1 */
-  add_to_vector(&buffer->I1, &buffer->sample_stream[0]);
-
-  /* Add I1 to I2 */
-  add_to_vector(&buffer->I2, &buffer->I1);
-
-  /* adjusted sample = I2 */
-  new_sample = &buffer->I2;
+// temp
+     model->gravity_norm_squared = 70000000;
 }
 
 void normalize_angular(Vector* angular, physicsModel* model) {
@@ -109,12 +80,19 @@ void normalize_angular(Vector* angular, physicsModel* model) {
   sub_from_vector(angular, &model->gyro_ref);
 
     /* Really small angular velocities should be 0 */
+
+    // Misschien i.p.v. &&, voor elke coord afzonderlijk kijken?
     if(abs(angular->x) < ANGULAR_DETECTION_TRESHOLD
     && abs(angular->y) < ANGULAR_DETECTION_TRESHOLD
     && abs(angular->z) < ANGULAR_DETECTION_TRESHOLD) {
       clear_vector(angular);
     }
 }
+void normalize_accel(Vector* accel, physicsModel* model) {
+  /* Remove the reference so stationary would be 0, 0, 1g */
+  sub_from_vector(accel, &model->accel_ref);
+}
+
 
 void update_model(imuQueues* queues, physicsModel* model) {
     /* Clear processing queues for use as sampling queues */
@@ -132,14 +110,23 @@ void update_model(imuQueues* queues, physicsModel* model) {
 
 void update_model_orientation(imuQueues* queues, physicsModel* model) {
   vectorQueue* q = queues->gyro_processing_ptr;
+  vectorQueue* p = queues->accel_processing_ptr;
 
   for(int i = 0; i < q->size; i++) {
     normalize_angular(&q->queue[i], model);
+    normalize_accel(&p->queue[i], model);
+    Vector orientation_deg_10;
+    shr_vectors(ORIENTATION_DEG_10_SHR, &model->orientation, &orientation_deg_10);
+    euler_transform(&q->queue[i], &orientation_deg_10);
 
-    //Vector orientation_deg;
-    //div_vectors(ORIENTATION_UNITS_DEG, &model->orientation, &orientation_deg);
+    // Only complement orientation with accel data when linear acceleration is small
+    if(vector_norm_squared(&p->queue[i]) < model->gravity_norm_squared + 500){
+      complement_orientation(&model->orientation, &p->queue[i]);
+      PORTA = 1; // check to see whether complement filter is active
+    } else {
+      PORTA = 0;
+    }
 
-    coord_transform_f(&q->queue[i], &model->orientation);
     add_to_vector(&model->orientation, &q->queue[i]);
   }
 
@@ -147,4 +134,16 @@ void update_model_orientation(imuQueues* queues, physicsModel* model) {
 
 void update_model_position(imuQueues* queues, physicsModel* model) {
 
+}
+
+void complement_orientation(Vector32* orientation, Vector* acceleration){
+  float x = acceleration->x - 200; // temp
+  float y = acceleration->y + 200; // temp
+  float z = acceleration->z;
+
+  float pitch = atan2(y,z);
+  float roll = atan2(-x,sqrtf(y*y+z*z));
+
+  orientation->x = (orientation->x * 99 + 751377*pitch)/100;
+  orientation->y = (orientation->y * 99 + 751377*roll)/100;
 }
