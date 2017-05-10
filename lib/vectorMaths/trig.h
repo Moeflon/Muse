@@ -11,41 +11,22 @@
 #include <stdint.h>
 
 /**
- * @brief sine lookup table
+ * @brief sine table with 901 values, 900 ~ 90 degrees, sin_lookup(900) = 32767
  */
-extern const uint8_t sin_table[91];
-
-/** @brief extra large sine lookup table
- *
- */
-extern const int32_t sin_table_xl[1001];
+extern const int16_t sin_table[901];
 
 /**
- * @brief Returns sin from lookuptable, fixed point multiplied by 100
- * @param degrees
- * @return sine multiplied by 100
+ * @brief Returns sin from lookup table, fixed point multiplied by 32767
+ * @param angle in degrees*10
+ * @return sine multiplied by 32767
  */
-int8_t sin100(int16_t degrees);
+int16_t sin_shift(int16_t angle);
 
 /**
- * @brief Returns cos from lookuptable, fixed point multiplied by 100
- * @param degrees
- * @return cosine multiplied by 100
+ * @brief Returns sin from lookup table, fixed point multiplied by 32767
+ * @param angle in degrees*10
+ * @return cosine multiplied by 32767
  */
-int8_t cos100(int16_t degrees);
-
-/**
- * @brief Returns sin from lookuptable, fixed point multiplied by 1000000
- * @param degrees
- * @return sine multiplied by 1000000
- */
-int32_t sin_xl(int16_t angle);
-
-/**
- * @brief Returns cos from lookuptable, fixed point multiplied by 1000000
- * @param degrees
- * @return cosine multiplied by 1000000
- */
-int32_t cos_xl(int32_t angle);
+int16_t cos_shift(int16_t angle);
 
 #endif
