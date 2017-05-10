@@ -9,6 +9,7 @@
 #define VECTOR_MATHS_H_
 
 #include <stdint.h>
+#include <lookupMaths.h>
 
 /**
  * @brief A simple three-dimensional vector
@@ -76,13 +77,13 @@ typedef struct Vector32 {
   (b)->z = (a)->z >> (s);          \
 } while(0)
 
-#define shl_vector(s, a) do {  \
-  (a)->x = (a)->x << (s);         \
-  (a)->y = (a)->y << (s);         \
-  (a)->z = (a)->z << (s);         \
+#define shl_vector(s, a) do {      \
+  (a)->x = (a)->x << (s);          \
+  (a)->y = (a)->y << (s);          \
+  (a)->z = (a)->z << (s);          \
 } while(0)
 
-#define shr_vector(s, a) do {  \
+#define shr_vector(s, a) do {      \
   (a)->x = (a)->x >> (s);          \
   (a)->y = (a)->y >> (s);          \
   (a)->z = (a)->z >> (s);          \
@@ -106,16 +107,12 @@ typedef struct Vector32 {
   (a)->z *= (s);                   \
 } while(0)
 
+#define vector_norm_squared(v) (int32_t)(v)->x * (v)->x + (v)->y * (v)->y + (v)->z * (v)->z
+
 /**
- * @brief adjusts given vector according to orientation vector such that axes are correct
+ * @brief transforms measurement so that it will correctly add to euler angles according to current orientation
  * @param measured pointer to measurment vector
  * @param orientation pointer to ortientation vector (in degrees)
  */
-void coord_transform(Vector* measurement,  Vector32* orientation);
-
-void coord_transform_f(Vector* measurement,  Vector32* orientation);
-
-int32_t vector_norm_squared(Vector* v);
-
-
+void euler_transform(Vector* measurement,  Vector* orientation);
 #endif

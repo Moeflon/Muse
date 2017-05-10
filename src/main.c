@@ -33,6 +33,7 @@ int main(void) {
       update_model(&g_queues, &g_model);
       orientation = g_model.orientation;
       shr_vector(10, &orientation);
+      div_vector(10, &orientation);
 
       clearLCD();
       printCharToLCD('X', 0, 0);

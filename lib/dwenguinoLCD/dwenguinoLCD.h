@@ -4,15 +4,14 @@
  * @date 11/01/2017
  * @brief This file contains function declarations which allow you to communicate with the lcd screen on the Dwenguino board
  *
- * Before you can use the lcd you should call the initLCD() function. 
+ * Before you can use the lcd you should call the initLCD() function.
  * Afterwards you can either append or print characters or integers to the screen.
  * For more information on the dwenguino board visit:
- * @see http://www.dwengo.org/learn 
+ * @see http://www.dwengo.org/learn
  */
 
 #ifndef DWENGUINO_LCD_H_
 #define DWENGUINO_LCD_H_
-
 
 #include "dwenguinoBoard.h"
 #include <avr/delay.h>
@@ -44,7 +43,7 @@ void clearLCD(void);
 
 /**
  * @brief sends a command to the LCD
- * This function sends a low level command to the LCD. 
+ * This function sends a low level command to the LCD.
  * The command is represented as a byte and is transferred to the LCD screen through the PORTA register.
  * @param c command to be transfered to the LCD
  */
@@ -61,7 +60,7 @@ void setCursorLCD(BYTE l, BYTE p);
 /**
  * @brief Append a character to the LCD
  * Adds a character at the current cursor positon then moves the cursor to the next position
- * @param c the character to append	
+ * @param c the character to append
  */
 void appendCharToLCD(const char c);
 
@@ -69,7 +68,7 @@ void appendCharToLCD(const char c);
  * @brief Print character to LCD
  * Prints a character to a specified position.
  * @param s the character to print
- * @param l the line 
+ * @param l the line
  * @param p the position in the line
  */
 void printCharToLCD(const char s, BYTE l, BYTE p);
