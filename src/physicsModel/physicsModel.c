@@ -142,6 +142,9 @@ void complement_orientation(Vector32* orientation, Vector* acceleration){
   float z = acceleration->z;
 
   float pitch = atan2(y,z);
+  /* The argument of sqrt will fit in uint16_t for our applications,
+     accounting for the scale of our accel data and the physical conditions we are
+     in */
   float roll = atan2(-x,sqrtf(y*y+z*z));
 
   orientation->x = (orientation->x * 99 + 751377*pitch)/100;
