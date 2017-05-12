@@ -23,6 +23,16 @@ extern const int16_t sin_table[901];
 extern const uint16_t squares_table[256];
 
 /**
+ * @brief 6 tables of different accuracy containing arctan values
+ */
+extern const int16_t arctan_table_1[1025];
+extern const int16_t arctan_table_2[129];
+extern const int16_t arctan_table_3[65];
+extern const int16_t arctan_table_4[33];
+extern const int16_t arctan_table_5[17];
+extern const int16_t arctan_table_6[9];
+
+/**
  * @brief Returns sin from lookup table, fixed point TRIG_SHIFT_AMOUNT times shifted to left
  * @param angle in degrees*10
  * @return sine multiplied by TRIG_SHIFT_AMOUNT shifted to left
@@ -42,5 +52,12 @@ int16_t lu_cos(int16_t angle);
  * @see http://stackoverflow.com/a/5296669
  */
 uint8_t lu_sqrt(uint16_t x);
+
+/**
+  * @brief lookup version of the well known atan2() functions
+  * @param numerator & denominator of the value you want the know the arctan of
+  * @return a value between -1800 and + 1800, 10 ~ 1 degree
+  */
+int16_t lu_arctan(int16_t numerator, int16_t denominator);
 
 #endif

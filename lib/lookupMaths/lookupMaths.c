@@ -233,73 +233,41 @@ inline uint8_t lu_sqrt(uint16_t x) {
     return s - squares_table;
 }
 
-inline int16_t lu_arctan(int16_t numerator, int16_t denominator){
+inline int16_t lu_arctan(int16_t n, int16_t d){
 
-	/* If numerator/denominator < 2, ... */
-  if( (numerator >> 1) > denominator ){
-		int16_t index;
-		index = (((int32_t) numerator) << 9) / denominator;
-		return arctan_table_1[index];
+	/* rare, but here for completeness and to prevent divisions by zero */
+	if( d == 0 ){
+		if( n >= 0 )	return 900;
+		else return -900;
 	}
 
-	/* If numerator/denominator < 4, ... */
-  if( (numerator >> 2) > denominator ){
-		int16_t index;
-		index = ((((int32_t) numerator) << 6) / denominator) - 128;
-		return arctan_table_2[index];
+	/* makes n and d positive, but saves the original signs for later */
+	int8_t n_sign = 1;
+	int8_t d_sign = 1;
+	if( n < 0 ){
+		n_sign = -1;
+		n *= -1;
+	}
+	if( d < 0){
+		d_sign = -1;
+		d *= -1;
 	}
 
-	/* If numerator/denominator < 8, ... */
-	if( (numerator >> 3) > denominator ){
-		int16_t index;
-		index = ((((int32_t) numerator) << 4) / denominator) - 64;
-		return arctan_table_3[index];
-	}
+ 	int16_t angle;
 
-	/* If numerator/denominator < 16, ... */
-	if( (numerator >> 4) > denominator ){
-		int16_t index;
-		index = ((((int32_t) numerator) << 2) / denominator) - 32;
-		return arctan_table_4[index];
-	}
+	/* these only return positive angles */
+  if( (n >> 1) > d ) angle = arctan_table_1[ (((int32_t) n) << 9) / d ];
+	else if( (n >> 2) > d )	angle = arctan_table_2[ (((int32_t) n) << 6) / d - 128 ];
+	else if( (n >> 3) > d )	angle = arctan_table_3[ (((int32_t) n) << 4) / d - 64 ];
+	else if( (n >> 4) > d )	angle = arctan_table_4[ (((int32_t) n) << 2) / d - 32 ];
+	else if( (n >> 5) > d )	angle = arctan_table_5[ (n / d) - 16 ];
+	else if( (n >> 6) > d )	angle = arctan_table_6[ (( n / d ) >> 2) - 8 ];
+	else angle = 900; /* pi/2 */
 
-	/* If numerator/denominator < 32, ... */
-	if( (numerator >> 5) > denominator ){
-		int16_t index;
-		index = (numerator / denominator) - 16;
-		return arctan_table_5[index];
-	}
+	/* set correct sign for angle */
+	angle *= n_sign*d_sign;
+	/* add pi or -pi to the arctan when denominator is negative */
+	if( d_sign == -1 ) angle += 1800 * n_sign;
 
-	/* If numerator/denominator < 64, ... */
-	if( (numerator >> 6) > denominator ){
-		int16_t index;
-		index = (( numerator / denominator ) >> 2) - 8;
-		return arctan_table_6[index];
-	}
-
-	return 900; //90deg
-
-
-	/*
-	 * Unlikely scenarios, but here for completeness
-	 * this only happens when the dwenguino is held upside down
-	 * or when the denominator is exactly 0
-   */
-	 /*
-	if( denominator < 0 ){
-		if( numerator >= 0){
-			return 0; // arctan + 180deg
-		} else {
-			return 0; // arctan - 180deg
-		}
-	}
-
-	if( denominator == 0){
-		if( numerator >= 0){
-			return 0; // 90deg
-		} else {
-			return 0; // -90deg
-		}
-	}
-	*/
+	return angle;
 }
