@@ -129,7 +129,6 @@ void update_model_orientation(imuQueues* queues, physicsModel* model) {
 
     add_to_vector(&model->orientation, &q->queue[i]);
   }
-
 }
 
 void update_model_position(imuQueues* queues, physicsModel* model) {
@@ -137,16 +136,19 @@ void update_model_position(imuQueues* queues, physicsModel* model) {
 }
 
 void complement_orientation(Vector32* orientation, Vector* acceleration){
-  float x = acceleration->x - 200; // temp
-  float y = acceleration->y + 200; // temp
-  float z = acceleration->z;
+  int16_t x = acceleration->x - 200; // temp, until we fix accel calibration
+  int16_t y = acceleration->y + 200; // ^
+  int16_t z = acceleration->z;
 
-  float pitch = atan2(y,z);
   /* The argument of sqrt will fit in uint16_t for our applications,
      accounting for the scale of our accel data and the physical conditions we are
      in */
-  float roll = atan2(-x,sqrtf(y*y+z*z));
+  uint16_t square = ((int32_t)y)*y + ((int32_t)z)*z;
 
-  orientation->x = (orientation->x * 99 + 751377*pitch)/100;
-  orientation->y = (orientation->y * 99 + 751377*roll)/100;
+  int16_t pitch = lu_arctan(y,z);
+  int16_t roll = lu_arctan(-x,lu_sqrt(square));
+
+  uint8_t shift = 5;
+  orientation->x = ((orientation->x << shift) - orientation->x + pitch) >> shift;
+  orientation->y = ((orientation->y << shift) - orientation->y + roll) >> shift;
 }
