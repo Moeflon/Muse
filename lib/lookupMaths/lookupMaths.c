@@ -4,9 +4,10 @@
  * @author Victor-Louis De Gusseme
  */
 
+#include <avr/pgmspace.h>
 #include "lookupMaths.h"
 
-const int16_t sin_table[901] = {
+const int16_t sin_table[901] PROGMEM = {
 	0,     57,    114,   171,   228,   285,   343,   400,   457,   514,   571,   629,   686,   743,   800,   857,
 	914,   972,   1029,  1086,  1143,  1200,  1257,  1314,  1372,  1429,  1486,  1543,  1600,  1657,  1714,  1772,
 	1829,  1886,  1943,  2000,  2057,  2114,  2171,  2228,  2285,  2342,  2399,  2456,  2513,  2570,  2627,  2684,
@@ -66,7 +67,7 @@ const int16_t sin_table[901] = {
 	32766, 32766, 32766, 32766, 32767,
 };
 
-const uint16_t squares_table[256] = {
+const uint16_t squares_table[256] PROGMEM = {
 	0,     1,     4,     9,     16,    25,    36,    49,
 	64,    81,    100,   121,   144,   169,   196,   225,
 	256,   289,   324,   361,   400,   441,   484,   529,
@@ -101,7 +102,7 @@ const uint16_t squares_table[256] = {
 	61504, 62001, 62500, 63001, 63504, 64009, 64516, 65025,
 };
 
-const int16_t arctan_table_1[1025] = {
+const int16_t arctan_table_1[1025] PROGMEM = {
 	0,   1,   2,   3,   4,   5,   6,   7,   8,   10,  11,  12,  13,  14,  15,  16,
 	17,  19,  20,  21,  22,  23,  24,  25,  26,  27,  29,  30,  31,  32,  33,  34,
 	35,  36,  37,  39,  40,  41,  42,  43,  44,  45,  46,  48,  49,  50,  51,  52,
@@ -168,7 +169,7 @@ const int16_t arctan_table_1[1025] = {
 	630, 630, 631, 631, 631, 631, 632, 632, 632, 632, 633, 633, 633, 633, 633, 634,
 	634,
 };
-const int16_t arctan_table_2[129] = {
+const int16_t arctan_table_2[129] PROGMEM = {
 	634, 636, 637, 639, 641, 643, 644, 646, 647, 649, 651, 652, 654, 655, 657, 658,
 	660, 661, 663, 664, 666, 667, 668, 670, 671, 673, 674, 675, 676, 678, 679, 680,
 	681, 683, 684, 685, 686, 687, 689, 690, 691, 692, 693, 694, 695, 696, 698, 699,
@@ -179,23 +180,23 @@ const int16_t arctan_table_2[129] = {
 	750, 751, 751, 752, 753, 753, 754, 754, 755, 755, 756, 756, 757, 758, 758, 759,
 	759,
 };
-const int16_t arctan_table_3[65] = {
+const int16_t arctan_table_3[65] PROGMEM = {
 	759, 761, 763, 765, 767, 769, 771, 773, 774, 776, 777, 779, 781, 782, 784, 785,
 	786, 788, 789, 790, 792, 793, 794, 795, 796, 798, 799, 800, 801, 802, 803, 804,
 	805, 806, 807, 808, 809, 809, 810, 811, 812, 813, 814, 814, 815, 816, 817, 817,
 	818, 819, 820, 820, 821, 822, 822, 823, 824, 824, 825, 825, 826, 827, 827, 828,
 	828,
 };
-const int16_t arctan_table_4[33] = {
+const int16_t arctan_table_4[33] PROGMEM = {
 	805, 809, 814, 817, 821, 824, 827, 830, 832, 835, 837, 839, 841, 843, 844, 846,
 	848, 849, 850, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 862, 863,
 	864,
 };
-const int16_t arctan_table_5[17] = {
+const int16_t arctan_table_5[17] PROGMEM = {
 	864, 866, 868, 869, 871, 872, 873, 875, 876, 877, 877, 878, 879, 880, 880, 881,
 	882,
 };
-const int16_t arctan_table_6[9] = {
+const int16_t arctan_table_6[9] PROGMEM = {
 	882, 884, 885, 886, 888, 888, 889, 890, 891,
 };
 
@@ -212,7 +213,7 @@ inline int16_t lu_sin(int16_t angle) {
 		angle -= 1800;
 		sign = -1;
 	}
-	return sign * sin_table[angle];
+	return sign * pgm_read_dword(&(sin_table[angle]));
 }
 
 inline int16_t lu_cos(int16_t angle) {
@@ -221,52 +222,54 @@ inline int16_t lu_cos(int16_t angle) {
 
 inline uint8_t lu_sqrt(uint16_t x) {
     const uint16_t* s = squares_table;
-    if(s[128] <= x) s += 128;
-    if(s[64] <= x) s += 64;
-    if(s[32] <= x) s += 32;
-    if(s[6] <= x) s += 16;
-    if(s[8] <= x) s += 8;
-    if(s[4] <= x) s += 4;
-    if(s[2] <= x) s += 2;
-    if(s[1] <= x) s += 1;
+    if(pgm_read_dword(&(s[128])) <= x) s += 128;
+    if(pgm_read_dword(&(s[64])) <= x) s += 64;
+    if(pgm_read_dword(&(s[32])) <= x) s += 32;
+    if(pgm_read_dword(&(s[16])) <= x) s += 16;
+    if(pgm_read_dword(&(s[8])) <= x) s += 8;
+    if(pgm_read_dword(&(s[4])) <= x) s += 4;
+    if(pgm_read_dword(&(s[2])) <= x) s += 2;
+    if(pgm_read_dword(&(s[1])) <= x) s += 1;
 
     return s - squares_table;
 }
 
-inline int16_t lu_arctan(int16_t n, int16_t d){
-
-	/* rare, but here for completeness and to prevent divisions by zero */
-	if( d == 0 ){
-		if( n >= 0 )	return 900;
+inline int16_t lu_arctan(int16_t n, int16_t d) {
+	/* Rare, but here for completeness and to prevent divisions by zero */
+	if(d == 0) {
+		if(n >= 0) return 900;
 		else return -900;
 	}
 
-	/* makes n and d positive, but saves the original signs for later */
+	/* Makes n and d positive, but saves the original signs for later */
 	int8_t n_sign = 1;
 	int8_t d_sign = 1;
-	if( n < 0 ){
+
+	if(n < 0) {
 		n_sign = -1;
 		n *= -1;
 	}
-	if( d < 0){
+
+	if(d < 0) {
 		d_sign = -1;
 		d *= -1;
 	}
 
  	int16_t angle;
 
-	/* these only return positive angles */
-  if( (n >> 1) > d ) angle = arctan_table_1[ (((int32_t) n) << 9) / d ];
-	else if( (n >> 2) > d )	angle = arctan_table_2[ (((int32_t) n) << 6) / d - 128 ];
-	else if( (n >> 3) > d )	angle = arctan_table_3[ (((int32_t) n) << 4) / d - 64 ];
-	else if( (n >> 4) > d )	angle = arctan_table_4[ (((int32_t) n) << 2) / d - 32 ];
-	else if( (n >> 5) > d )	angle = arctan_table_5[ (n / d) - 16 ];
-	else if( (n >> 6) > d )	angle = arctan_table_6[ (( n / d ) >> 2) - 8 ];
-	else angle = 900; /* pi/2 */
+	/* These only return positive angles */
+  if((n >> 1) > d) angle = pgm_read_dword(&(arctan_table_1[(((int32_t) n) << 9) / d]));
+	else if((n >> 2) > d)	angle = pgm_read_dword(&(arctan_table_2[(((int32_t) n) << 6) / d - 128]));
+	else if((n >> 3) > d)	angle = pgm_read_dword(&(arctan_table_3[(((int32_t) n) << 4) / d - 64]));
+	else if((n >> 4) > d)	angle = pgm_read_dword(&(arctan_table_4[(((int32_t) n) << 2) / d - 32]));
+	else if((n >> 5) > d)	angle = pgm_read_dword(&(arctan_table_5[(n / d) - 16]));
+	else if((n >> 6) > d) angle = pgm_read_dword(&(arctan_table_6[((n / d) >> 2) - 8]));
+	else angle = 900; /* Pi/2 */
 
-	/* set correct sign for angle */
-	angle *= n_sign*d_sign;
-	/* add pi or -pi to the arctan when denominator is negative */
+	/* Set correct sign for angle */
+	angle *= n_sign * d_sign;
+
+	/* Add pi or -pi to the arctan when denominator is negative */
 	if( d_sign == -1 ) angle += 1800 * n_sign;
 
 	return angle;

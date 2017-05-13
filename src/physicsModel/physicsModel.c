@@ -146,7 +146,7 @@ void complement_orientation(Vector32* orientation, Vector* acceleration){
   uint16_t square = ((int32_t)y)*y + ((int32_t)z)*z;
 
   int16_t pitch = lu_arctan(y,z);
-  int16_t roll = lu_arctan(-x,lu_sqrt(square));
+  int16_t roll = lu_arctan(-x, lu_sqrt(square));
 
   uint8_t shift = 5;
   orientation->x = ((orientation->x << shift) - orientation->x + pitch) >> shift;
