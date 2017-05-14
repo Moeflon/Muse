@@ -10,28 +10,27 @@
 #include "physicsModel/physicsModel.h"
 #include "physicsSampler/physicsSampler.h"
 
-volatile physicsModel g_model;
-volatile imuQueues g_queues;
 volatile state g_state;
 
 int main(void) {
-  static physicsModel model;
-
+  physicsModel model = { 0 };
   initLCD();
   clearLCD();
   backlightOn();
 
   imu_init();
+  calibrate_imu_data(&model);
 
-  calibrate_gyro(&model);
-  calibrate_accel(&model); // TODO fix this, currently it crashes the dwenguino
-  g_model = model;
+  imuDataQueues sampling;
+  imuDataQueues processing;
+  start_sampler(&sampling, &processing);
 
-  start_sampler();
   Vector32 orientation;
   for(;;) {
-      update_model(&g_queues, &g_model);
-      orientation = g_model.orientation;
+      update_model(&model);
+      orientation = model.orientation;
+      //sub_from_vector(&orientation, &model.accel_ref);
+      //orientation = model.accel_ref;
       shr_vector(10, &orientation);
       div_vector(10, &orientation);
 
@@ -44,6 +43,6 @@ int main(void) {
 
       printCharToLCD('Z', 1, 8);
       printIntToLCD(orientation.z, 1, 10);
-      _delay_ms(10);
+      _delay_ms(100);
   }
 }

@@ -34,6 +34,12 @@ int16_t lu_cos(int16_t angle);
 uint8_t lu_sqrt(uint16_t x);
 
 /**
+ * @brief Calculates integer sqrt of 32-bit unsigned number using binary search in a lookup table
+ * @param x number to sqrt
+ */
+uint16_t lu_sqrt32(uint32_t x);
+
+/**
   * @brief lookup version of the well known atan2() functions
   * @param numerator & denominator of the value you want the know the arctan of
   * @return a value between -1800 and + 1800, 10 ~ 1 degree

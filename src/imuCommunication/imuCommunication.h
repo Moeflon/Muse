@@ -21,24 +21,6 @@
 #include <twiProtocol.h>
 
 /**
- * @brief Queues used for storing and processing sampled data
- *        Pointers will be modified to point to one of the four queues, in order
- *        to be able to swap memory locations for processing and sampling without
- *        copying.
- */
-typedef struct imuQueues {
-  vectorQueue one;
-  vectorQueue two;
-  vectorQueue three;
-  vectorQueue four;
-
-  vectorQueue* gyro_sample_ptr; /**> Sampling queue for gyro data */
-  vectorQueue* accel_sample_ptr; /**> Sampling queue for accel data */
-  vectorQueue* gyro_processing_ptr; /**> Processing queue for gyro data */
-  vectorQueue* accel_processing_ptr; /**> Processing queue for accel data */
-} imuQueues;
-
-/**
  * @brief sets up IMU with desired settings
  */
 void imu_init(void);

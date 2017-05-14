@@ -10,17 +10,12 @@
 
 #include <vectorQueue.h>
 #include "physicsModel/physicsModel.h"
-
-/**
- * Global variable for storing model state.
- */
-extern volatile physicsModel g_model;
+#include "physicsSampler/physicsSampler.h"
 
 /**
  * Global variables for queues
  */
-
-extern volatile imuQueues g_queues;
+extern volatile dataQueuesPointers g_data_queues_ptrs;
 
 /**
  * Global variables and definitions for application state

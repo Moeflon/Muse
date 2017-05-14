@@ -10,12 +10,13 @@
 
 #include <vectorMaths.h>
 #include "../imuCommunication/imuCommunication.h"
+#include "../physicsSampler/physicsSampler.h"
 
-#define CALIBRATION_ITERATIONS 2048
-#define AVERAGING_BUFFER_SIZE 11 /* must be >= lg of iterations but lg is expensive! */
+#define CALIBRATION_ITERATIONS 4
+#define LG_CALIBRATION_ITERATIONS 2
 
 #define ANGULAR_DETECTION_TRESHOLD 50
-#define DDI_SAMPLE_STREAM_SIZE 3
+#define ACCEL_NSQ_COMPLEMENTARY_TRESHOLD 8600
 
 /* amount to shift orientation right to get degrees * 10 */
 #define ORIENTATION_DEG_10_SHR 10
@@ -28,27 +29,14 @@ typedef struct physicsModel {
   Vector position; /**> position vector */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */
-  int32_t gravity_norm_squared; /**> vector norm of gravity squared */
 } physicsModel;
 
 /**
- * @brief calculates average of #CALIBRATION_ITERATIONS values obtained with the data_provider function with minimal memory usage
- * @param data_provider function pointer to function returning vectors to be averaged
- * @return the average
- */
-Vector streamed_calibration_average(Vector (*data_provider)(void));
-
-/**
- * @brief calculates references for accelerometer measurements while device is stationary on a table
+ * @brief calculates references for accelerometer and gyro measurements while device is stationary on a table
+ * @param queues pointer to queues
  * @param model pointer to model to calibrate
  */
-void calibrate_accel(physicsModel* model);
-
-/**
- * @brief calculates references for gyroscope measurements while device is stationary on a table
- * @param model pointer to model to calibrate
- */
-void calibrate_gyro(physicsModel* model);
+void calibrate_imu_data(physicsModel* model);
 
 /**
  * @brief normalizes measurement Vector according to reference
@@ -66,26 +54,25 @@ void normalize_angular(Vector* angular, physicsModel* model);
 
 /**
  * @brief sets up queues for processing and updates model parts
- * @param queues pointer to queues
  * @param model pointer to model
  */
-void update_model(imuQueues* queues, physicsModel* model);
+void update_model(physicsModel* model);
 
 /**
  * @brief adjusts orientation vector according to queues
  *        (assumes processing and sampling queues are already swapped)
- * @param queues pointer to queues
+ * @param q_data pointer to dataQueues
  * @param model pointer to model
  */
-void update_model_orientation(imuQueues* queues, physicsModel* model);
+void update_model_orientation(imuDataQueues* q_data, physicsModel* model);
 
 /**
  * @brief adjusts position vector according to queues
  *        (assumes processing and sampling queues are already swapped)
- * @param queues pointer to queues
+ * @param q_data pointer to dataQueues
  * @param model pointer to physicsModel model
  */
-void update_model_position(imuQueues* queues, physicsModel* model);
+void update_model_position(imuDataQueues* q_data, physicsModel* model);
 
 /**
  * @brief updates pitch & roll with accelerometer data to eliminate drift

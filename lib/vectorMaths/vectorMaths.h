@@ -96,9 +96,9 @@ typedef struct Vector32 {
 } while(0)
 
 #define div_vector(s, a) do {      \
-  (a)->x /= (s);                   \
-  (a)->y /= (s);                   \
-  (a)->z /= (s);                   \
+  (a)->x = (a)->x / (s);           \
+  (a)->y = (a)->y / (s);           \
+  (a)->z = (a)->z / (s);           \
 } while(0)
 
 #define mul_vector(s, a) do {      \
@@ -107,7 +107,7 @@ typedef struct Vector32 {
   (a)->z *= (s);                   \
 } while(0)
 
-#define vector_norm_squared(v) (int32_t)(v)->x * (v)->x + (v)->y * (v)->y + (v)->z * (v)->z
+#define vector_norm_squared(v) ((int32_t)(v)->x * (v)->x + (v)->y * (v)->y + (v)->z * (v)->z)
 
 /**
  * @brief transforms measurement so that it will correctly add to euler angles according to current orientation

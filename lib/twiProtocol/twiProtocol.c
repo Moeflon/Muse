@@ -5,10 +5,8 @@
  */
 
 #include "twiProtocol.h"
-/*
-TODO: change register changing functions to macros
-*/
-uint8_t twi_start(uint8_t address) {
+
+inline uint8_t twi_start(uint8_t address) {
   /* Transmit START */
   TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);
 
@@ -35,7 +33,7 @@ uint8_t twi_start(uint8_t address) {
   return 0;
 }
 
-void twi_stop(void) {
+inline void twi_stop(void) {
   /* Transmit STOP */
   TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
 }

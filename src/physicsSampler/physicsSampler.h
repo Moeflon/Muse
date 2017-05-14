@@ -14,9 +14,34 @@
 #include "../physicsModel/physicsModel.h"
 
 /**
- * @brief Sets necessary registers for enabling timer1
+ * @brief Queues used for storing and processing sampled data
  */
-void start_sampler(void);
+typedef struct imuDataQueues {
+  vectorQueue gyro;
+  vectorQueue accel;
+} imuDataQueues;
+
+/**
+ * @brief Struct around processing and sampling queuepointers for dynamic switching
+ */
+typedef struct dataQueuesPointers {
+  imuDataQueues* sampling;
+  imuDataQueues* processing;
+} dataQueuesPointers;
+
+/**
+ * @brief Swaps the sampling and processing dataQueuesPointers
+ *        so the interrupt can update a fresh dataQueue while
+ *        we processes the old queue
+ */
+void swap_data_queues(void);
+
+/**
+ * @brief Sets necessary registers for enabling timer1
+ * @queues q_sampling pointer imuDataQueues initially used for sampling
+ * @queues q_processing pointer imuDataQueues initially used for processing
+ */
+void start_sampler(imuDataQueues* q_sampling, imuDataQueues* q_processing);
 
 /**
  * @brief Sets necessary registers for disabling timer1

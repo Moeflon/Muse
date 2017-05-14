@@ -217,7 +217,7 @@ inline int16_t lu_sin(int16_t angle) {
 		angle -= 1800;
 		sign = -1;
 	}
-	return sign * pgm_read_dword(&(sin_table[angle]));
+	return sign * pgm_read_word(&(sin_table[angle]));
 }
 
 inline int16_t lu_cos(int16_t angle) {
@@ -226,19 +226,23 @@ inline int16_t lu_cos(int16_t angle) {
 
 inline uint8_t lu_sqrt(uint16_t x) {
     const uint16_t* s = squares_table;
-    if(pgm_read_dword(&(s[128])) <= x) s += 128;
-    if(pgm_read_dword(&(s[64])) <= x) s += 64;
-    if(pgm_read_dword(&(s[32])) <= x) s += 32;
-    if(pgm_read_dword(&(s[16])) <= x) s += 16;
-    if(pgm_read_dword(&(s[8])) <= x) s += 8;
-    if(pgm_read_dword(&(s[4])) <= x) s += 4;
-    if(pgm_read_dword(&(s[2])) <= x) s += 2;
-    if(pgm_read_dword(&(s[1])) <= x) s += 1;
+    if(pgm_read_word(&(s[128])) <= x) s += 128;
+    if(pgm_read_word(&(s[64])) <= x) s += 64;
+    if(pgm_read_word(&(s[32])) <= x) s += 32;
+    if(pgm_read_word(&(s[16])) <= x) s += 16;
+    if(pgm_read_word(&(s[8])) <= x) s += 8;
+    if(pgm_read_word(&(s[4])) <= x) s += 4;
+    if(pgm_read_word(&(s[2])) <= x) s += 2;
+    if(pgm_read_word(&(s[1])) <= x) s += 1;
 
     return s - squares_table;
 }
 
-inline int16_t lu_arctan(int16_t n, int16_t d) {
+uint16_t lu_sqrt32(uint32_t x) {
+    if(x <= UINT16_MAX) return lu_sqrt(x);
+}
+
+int16_t lu_arctan(int16_t n, int16_t d) {
 	/* Rare, but here for completeness and to prevent divisions by zero */
 	if(d == 0) {
 		if(n >= 0) return 900;
@@ -262,19 +266,19 @@ inline int16_t lu_arctan(int16_t n, int16_t d) {
  	int16_t angle;
 
 	/* These only return positive angles */
-  if((n >> 1) > d) angle = pgm_read_dword(&(arctan_table_1[(((int32_t) n) << 9) / d]));
-	else if((n >> 2) > d)	angle = pgm_read_dword(&(arctan_table_2[(((int32_t) n) << 6) / d - 128]));
-	else if((n >> 3) > d)	angle = pgm_read_dword(&(arctan_table_3[(((int32_t) n) << 4) / d - 64]));
-	else if((n >> 4) > d)	angle = pgm_read_dword(&(arctan_table_4[(((int32_t) n) << 2) / d - 32]));
-	else if((n >> 5) > d)	angle = pgm_read_dword(&(arctan_table_5[(n / d) - 16]));
-	else if((n >> 6) > d) angle = pgm_read_dword(&(arctan_table_6[((n / d) >> 2) - 8]));
+  if((n >> 1) < d) angle = pgm_read_word(&(arctan_table_1[(((int32_t) n) << 9) / d]));
+	else if((n >> 2) < d)	angle = pgm_read_word(&(arctan_table_2[(((int32_t) n) << 6) / d - 128]));
+	else if((n >> 3) < d)	angle = pgm_read_word(&(arctan_table_3[(((int32_t) n) << 4) / d - 64]));
+	else if((n >> 4) < d)	angle = pgm_read_word(&(arctan_table_4[(((int32_t) n) << 2) / d - 32]));
+	else if((n >> 5) < d)	angle = pgm_read_word(&(arctan_table_5[(n / d) - 16]));
+	else if((n >> 6) < d) angle = pgm_read_word(&(arctan_table_6[((n / d) >> 2) - 8]));
 	else angle = 900; /* Pi/2 */
 
 	/* Set correct sign for angle */
 	angle *= n_sign * d_sign;
 
 	/* Add pi or -pi to the arctan when denominator is negative */
-	if( d_sign == -1 ) angle += 1800 * n_sign;
+	if(d_sign == -1) angle += 1800 * n_sign;
 
 	return angle;
 }
