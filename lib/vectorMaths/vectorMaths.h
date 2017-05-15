@@ -115,4 +115,5 @@ typedef struct Vector32 {
  * @param orientation pointer to ortientation vector (in degrees)
  */
 void euler_transform(Vector* measurement,  Vector* orientation);
+void coord_transform(Vector* measurement,  Vector* orientation);
 #endif
