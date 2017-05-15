@@ -25,10 +25,10 @@ int main(void) {
   volatile imuDataQueues processing = { 0 };
   start_sampler(&sampling, &processing);
 
-  Vector orientation;
+  Vector32 print_val;
   for(;;) {
       update_model(&model);
-      orientation = model.velocity_m_s;
+      print_val = model.position_raw;
       //sub_from_vector(&orientation, &model.accel_ref);
       //orientation = model.accel_ref;
       //shr_vector(10, &orientation);
@@ -36,13 +36,13 @@ int main(void) {
 
       clearLCD();
       printCharToLCD('X', 0, 0);
-      printIntToLCD(orientation.x, 0, 2);
+      printIntToLCD(print_val.x >> 3, 0, 2);
 
       printCharToLCD('Y', 1, 0);
-      printIntToLCD(orientation.y, 1, 2);
+      printIntToLCD(print_val.y >> 3, 1, 2);
 
       printCharToLCD('Z', 1, 8);
-      printIntToLCD(orientation.z, 1, 10);
+      printIntToLCD(print_val.z >> 3, 1, 10);
       _delay_ms(100);
   }
 }

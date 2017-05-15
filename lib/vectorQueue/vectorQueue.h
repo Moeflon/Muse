@@ -62,4 +62,9 @@ Vector vq_average(vectorQueue* q);
  * @return deviation
  */
 Vector vq_deviation(vectorQueue* q, Vector* center);
+
+/**
+  * @brief Smooths a queue using a moving average
+  */
+void vq_smooth(vectorQueue* q);
 #endif

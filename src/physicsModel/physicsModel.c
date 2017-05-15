@@ -80,6 +80,9 @@ void update_model(physicsModel* model) {
   vectorQueue q = g_data_queues_ptrs.processing->gyro;
   vectorQueue p = g_data_queues_ptrs.processing->accel;
 
+  /* Smooth the accel data */
+  vq_smooth(&p);
+
   Vector accel_avg = vq_average(&q);
   Vector accel_deviation = vq_deviation(&q, &accel_avg);
 
@@ -88,11 +91,15 @@ void update_model(physicsModel* model) {
   uint8_t accel_small_deviation_y = (accel_deviation.y < accel_noise_devation_total) ? 1 : 0;
   uint8_t accel_small_deviation_z = (accel_deviation.z < accel_noise_devation_total) ? 1 : 0;
 
+
   DDRA = 0xFF;
   PORTA = 0;
   if(accel_small_deviation_x) PORTA |= 8;
   if(accel_small_deviation_y) PORTA |= 4;
   if(accel_small_deviation_z) PORTA |= 2;
+
+
+
 
   for(int i = 0; i < q.size; i++) {
     /* Crudely normalize measurements for the first time */
@@ -123,14 +130,27 @@ void update_model(physicsModel* model) {
     correct_accel(&p.queue[i], model);
 
     /* Integrate acceleration to get velocity */
-    //add_to_vector(&model->velocity_raw, &p.queue[i]);
+    if(accel_small_deviation_x){
+      p.queue[i].x = 0;
+      model->velocity_raw.x = 0;
+    }
+    if(accel_small_deviation_x){
+      p.queue[i].y = 0;
+      model->velocity_raw.y = 0;
+    }
+    if(accel_small_deviation_x){
+      p.queue[i].z = 0;
+      model->velocity_raw.z = 0;
+    }
+    add_to_vector(&model->velocity_raw, &p.queue[i]);
 
     /* Update m/s * 64 velocity */
-    //shr_vectors(VELOCITY_M_S_SHIFT, &model->velocity_raw, &model->velocity_m_s);
+    shr_vectors(VELOCITY_M_S_SHIFT, &model->velocity_raw, &model->velocity_m_s);
+    add_to_vector(&model->position_raw, &model->velocity_m_s);
   }
 
-  div_vector(p.size, &accel_deviation);
-  model->velocity_m_s = accel_deviation;
+  //div_vector(p.size, &accel_deviation);
+  //model->velocity_m_s = p.queue[0];
 }
 
 void complement_orientation(Vector32* orientation, Vector* acceleration){
@@ -139,13 +159,9 @@ void complement_orientation(Vector32* orientation, Vector* acceleration){
   int16_t z = acceleration->z;
 
   int32_t pitch = (int32_t)lu_arctan(y, z) << ORIENTATION_DEG_SHIFT;
-
-  /* The argument of sqrt will fit in uint32_t for our applications,
-     accounting for the scale of our accel data and the physical conditions we are
-     in */
   int32_t roll = (int32_t)lu_arctan(-x, lu_sqrt32(((uint32_t)y)*y + ((uint32_t)z)*z)) << ORIENTATION_DEG_SHIFT;
 
-  uint8_t shift = 5;
-  orientation->x = (((orientation->x << shift) - orientation->x) + pitch) >> shift;
-  orientation->y = (((orientation->y << shift) - orientation->y) + roll) >> shift;
+  uint8_t complement_shift = 5;
+  orientation->x = (((orientation->x << complement_shift) - orientation->x) + pitch) >> complement_shift;
+  orientation->y = (((orientation->y << complement_shift) - orientation->y) + roll) >> complement_shift;
 }

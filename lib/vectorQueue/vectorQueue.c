@@ -55,3 +55,15 @@ Vector vq_deviation(vectorQueue* q, Vector* center) {
 
   return deviation;
 }
+
+void vq_smooth(vectorQueue* q){
+  if(q->size > 3){
+    const int end = q->size - 1;
+    const Vector* q_q = q->queue;
+    for(int i = 1; i < end; i++){
+      q->queue[i].x = ((int32_t)(q_q[i-1].x) + q_q[i].x + q_q[i+1].x)/3;
+      q->queue[i].y = ((int32_t)(q_q[i-1].y) + q_q[i].y + q_q[i+1].y)/3;
+      q->queue[i].z = ((int32_t)(q_q[i-1].z) + q_q[i].z + q_q[i+1].z)/3;
+    }
+  }
+}
