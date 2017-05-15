@@ -54,4 +54,12 @@ void vq_clear(vectorQueue* q);
  * @return average vector
  */
 Vector vq_average(vectorQueue* q);
+
+/**
+ * @brief Calculates the sum of deviations from average
+ * @param queue to deviate
+ * @param center vector around which to calulate deviation
+ * @return deviation
+ */
+Vector vq_deviation(vectorQueue* q, Vector* center);
 #endif

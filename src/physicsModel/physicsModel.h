@@ -15,18 +15,27 @@
 #define CALIBRATION_ITERATIONS 4
 #define LG_CALIBRATION_ITERATIONS 2
 
-#define ANGULAR_DETECTION_TRESHOLD 50
+#define ANGULAR_DETECTION_TRESHOLD1 40 /* Individual component treshold */
+#define ANGULAR_DETECTION_TRESHOLD2 50 /* All components at the same time treshold */
 #define ACCEL_NSQ_COMPLEMENTARY_TRESHOLD 8600
 
-/* amount to shift orientation right to get degrees * 10 */
-#define ORIENTATION_DEG_10_SHR 10
+/* amount to shift raw orientation right to get degrees * 10 */
+#define ORIENTATION_DEG_SHIFT 10
+
+/* amount to shift raw velocity right to get m/s * 64 */
+#define VELOCITY_M_S_SHIFT 12
+
+/* Upper bound for the mean deviation when there is no linear acceleration */
+#define ACCEL_NOISE_DEVIATION 70
 
 /**
  * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions
  */
 typedef struct physicsModel {
-  Vector32 orientation; /**> orientation vector */
-  Vector position; /**> position vector */
+  Vector32 orientation_raw; /**> raw orientation vector */
+  Vector orientation_deg; /**> orientation vector in degrees * 10 */
+  Vector32 velocity_raw; /**> position vector */
+  Vector velocity_m_s; /**> orientation vector in m/s * 64 */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */
 } physicsModel;
@@ -46,33 +55,25 @@ void calibrate_imu_data(physicsModel* model);
 void normalize_accel(Vector* accel, physicsModel* model);
 
 /**
- * @brief normalizes measurement Vector according to reference and applies ddi
+ * @brief normalizes measurement Vector according to reference
  * @param angular pointer to Vector containing measurement
  * @param model pointer to model
  */
 void normalize_angular(Vector* angular, physicsModel* model);
 
 /**
+ * @brief transforms measurement to inertial frame of reference
+ *        and filters out gravity. Zeros components if small enough
+ * @param angular pointer to Vector containing measurement
+ * @param model pointer to model
+ */
+void correct_accel(Vector* accel, physicsModel* model);
+
+/**
  * @brief sets up queues for processing and updates model parts
  * @param model pointer to model
  */
 void update_model(physicsModel* model);
-
-/**
- * @brief adjusts orientation vector according to queues
- *        (assumes processing and sampling queues are already swapped)
- * @param q_data pointer to dataQueues
- * @param model pointer to model
- */
-void update_model_orientation(imuDataQueues* q_data, physicsModel* model);
-
-/**
- * @brief adjusts position vector according to queues
- *        (assumes processing and sampling queues are already swapped)
- * @param q_data pointer to dataQueues
- * @param model pointer to physicsModel model
- */
-void update_model_position(imuDataQueues* q_data, physicsModel* model);
 
 /**
  * @brief updates pitch & roll with accelerometer data to eliminate drift

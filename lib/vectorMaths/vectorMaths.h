@@ -107,6 +107,13 @@ typedef struct Vector32 {
   (a)->z *= (s);                   \
 } while(0)
 
+#define abs_vector(a) do {         \
+  (a)->x = abs((a)->x);            \
+  (a)->y = abs((a)->y);            \
+  (a)->z = abs((a)->z);            \
+} while(0)
+
+
 #define vector_norm_squared(v) ((int32_t)(v)->x * (v)->x + (v)->y * (v)->y + (v)->z * (v)->z)
 
 /**
@@ -115,5 +122,4 @@ typedef struct Vector32 {
  * @param orientation pointer to ortientation vector (in degrees)
  */
 void euler_transform(Vector* measurement,  Vector* orientation);
-void coord_transform(Vector* measurement,  Vector* orientation);
 #endif

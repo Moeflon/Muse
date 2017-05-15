@@ -225,21 +225,31 @@ inline int16_t lu_cos(int16_t angle) {
 }
 
 inline uint8_t lu_sqrt(uint16_t x) {
-    const uint16_t* s = squares_table;
-    if(pgm_read_word(&(s[128])) <= x) s += 128;
-    if(pgm_read_word(&(s[64])) <= x) s += 64;
-    if(pgm_read_word(&(s[32])) <= x) s += 32;
-    if(pgm_read_word(&(s[16])) <= x) s += 16;
-    if(pgm_read_word(&(s[8])) <= x) s += 8;
-    if(pgm_read_word(&(s[4])) <= x) s += 4;
-    if(pgm_read_word(&(s[2])) <= x) s += 2;
-    if(pgm_read_word(&(s[1])) <= x) s += 1;
+  const uint16_t* s = squares_table;
+  if(pgm_read_word(&(s[128])) <= x) s += 128;
+  if(pgm_read_word(&(s[64])) <= x) s += 64;
+  if(pgm_read_word(&(s[32])) <= x) s += 32;
+  if(pgm_read_word(&(s[16])) <= x) s += 16;
+  if(pgm_read_word(&(s[8])) <= x) s += 8;
+  if(pgm_read_word(&(s[4])) <= x) s += 4;
+  if(pgm_read_word(&(s[2])) <= x) s += 2;
+  if(pgm_read_word(&(s[1])) <= x) s += 1;
 
-    return s - squares_table;
+  return s - squares_table;
 }
 
 uint16_t lu_sqrt32(uint32_t x) {
-    if(x <= UINT16_MAX) return lu_sqrt(x);
+  if(x <= UINT16_MAX) return lu_sqrt(x);
+	if(x <= 262143) return lu_sqrt(x >> 2) << 1;
+	if(x <= 1048575) return lu_sqrt(x >> 4) << 2;
+	if(x <= 4194303) return lu_sqrt(x >> 6) << 3;
+	if(x <= 16777215) return lu_sqrt(x >> 8) << 4;
+	if(x <= 67108863) return lu_sqrt(x >> 10) << 5;
+	if(x <= 268435455) return lu_sqrt(x >> 12) << 6;
+	if(x <= 1073741823) return lu_sqrt(x >> 14) << 7;
+	if(x <= UINT32_MAX) return lu_sqrt(x >> 16) << 8;
+
+	return UINT16_MAX;
 }
 
 int16_t lu_arctan(int16_t n, int16_t d) {

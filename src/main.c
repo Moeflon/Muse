@@ -21,18 +21,18 @@ int main(void) {
   imu_init();
   calibrate_imu_data(&model);
 
-  imuDataQueues sampling;
-  imuDataQueues processing;
+  volatile imuDataQueues sampling = { 0 };
+  volatile imuDataQueues processing = { 0 };
   start_sampler(&sampling, &processing);
 
-  Vector32 orientation;
+  Vector orientation;
   for(;;) {
       update_model(&model);
-      orientation = model.orientation;
+      orientation = model.velocity_m_s;
       //sub_from_vector(&orientation, &model.accel_ref);
       //orientation = model.accel_ref;
-      shr_vector(10, &orientation);
-      div_vector(10, &orientation);
+      //shr_vector(10, &orientation);
+      //div_vector(10, &orientation);
 
       clearLCD();
       printCharToLCD('X', 0, 0);

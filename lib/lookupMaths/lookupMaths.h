@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#define TRIG_SHIFT_AMOUNT 15
+#define TRIG_SHIFT 15
 
 /**
  * @brief Returns sin from lookup table, fixed point TRIG_SHIFT_AMOUNT times shifted to left

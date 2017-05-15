@@ -32,7 +32,26 @@ Vector vq_average(vectorQueue* q) {
     add_to_vector(&avg, &val);
   }
 
-  div_vector(q->size, &avg);
+  if(vq_free_space(q) > 0) {
+    div_vector(q->size, &avg);
+  }
+  else {
+    shr_vector(LG_VECTOR_QUEUE_MAX_SIZE, &avg);
+  }
+
   Vector avg16 = { avg.x, avg.y, avg.z };
   return avg16;
+}
+
+Vector vq_deviation(vectorQueue* q, Vector* center) {
+  Vector deviation = { 0 };
+
+  for(int i = 0; i < q->size; i++) {
+    Vector d;
+    sub_vectors(center, &q->queue[i], &d);
+    abs_vector(&d);
+    add_to_vector(&deviation, &d);
+  }
+
+  return deviation;
 }
