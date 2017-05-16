@@ -8,10 +8,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <util/delay.h>
-#include <vectorMaths.h>
+
+#include "../globals.h"
+#include "../vectorMaths/vectorMaths.h"
 
 #include "physicsModel.h"
-#include "../globals.h"
 
 void calibrate_imu_data(physicsModel* model) {
   volatile imuDataQueues one;
@@ -70,6 +71,16 @@ void correct_accel(Vector* accel, physicsModel* model) {
 
   /* Remove gravity from z-component */
   accel->z -= (INT16_MAX >> 2);
+
+  if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD1) accel->x;
+  if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD1) accel->y;
+  if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD1) accel->z;
+
+  if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD2
+  && abs(accel->y) < ACCEL_DETECTION_TRESHOLD2
+  && abs(accel->z) < ACCEL_DETECTION_TRESHOLD2) {
+    clear_vector(accel);
+  }
 }
 
 void update_model(physicsModel* model) {
@@ -83,23 +94,16 @@ void update_model(physicsModel* model) {
   /* Smooth the accel data */
   vq_smooth(&p);
 
+  /* Remove accel peaks using average and deviation */
   Vector accel_avg = vq_average(&q);
   Vector accel_deviation = vq_deviation(&q, &accel_avg);
+  vq_remove_peaks(&p, &accel_avg, ACCEL_NOISE_DEVIATION);
 
+  /* Set booleans for no-movement detection */
   uint16_t accel_noise_devation_total = p.size * ACCEL_NOISE_DEVIATION;
   uint8_t accel_small_deviation_x = (accel_deviation.x < accel_noise_devation_total) ? 1 : 0;
   uint8_t accel_small_deviation_y = (accel_deviation.y < accel_noise_devation_total) ? 1 : 0;
   uint8_t accel_small_deviation_z = (accel_deviation.z < accel_noise_devation_total) ? 1 : 0;
-
-
-  DDRA = 0xFF;
-  PORTA = 0;
-  if(accel_small_deviation_x) PORTA |= 8;
-  if(accel_small_deviation_y) PORTA |= 4;
-  if(accel_small_deviation_z) PORTA |= 2;
-
-
-
 
   for(int i = 0; i < q.size; i++) {
     /* Crudely normalize measurements for the first time */
@@ -129,19 +133,23 @@ void update_model(physicsModel* model) {
     /* Filter out gravity from accel, and zero if possible */
     correct_accel(&p.queue[i], model);
 
-    /* Integrate acceleration to get velocity */
-    if(accel_small_deviation_x){
+    /* If there's no movement in a particular component, round it to zero to remove drift */
+    if(accel_small_deviation_x) {
       p.queue[i].x = 0;
       model->velocity_raw.x = 0;
     }
-    if(accel_small_deviation_x){
+
+    if(accel_small_deviation_x) {
       p.queue[i].y = 0;
       model->velocity_raw.y = 0;
     }
-    if(accel_small_deviation_x){
+
+    if(accel_small_deviation_x) {
       p.queue[i].z = 0;
       model->velocity_raw.z = 0;
     }
+
+    /* Integrate acceleration to get velocity */
     add_to_vector(&model->velocity_raw, &p.queue[i]);
 
     /* Update m/s * 64 velocity */
@@ -150,7 +158,7 @@ void update_model(physicsModel* model) {
   }
 
   //div_vector(p.size, &accel_deviation);
-  //model->velocity_m_s = p.queue[0];
+
 }
 
 void complement_orientation(Vector32* orientation, Vector* acceleration){

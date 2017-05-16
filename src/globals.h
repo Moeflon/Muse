@@ -8,9 +8,9 @@
 #ifndef GLOBALS_H_
 #define GLOBALS_H_
 
-#include <vectorQueue.h>
 #include "physicsModel/physicsModel.h"
 #include "physicsSampler/physicsSampler.h"
+#include "vectorQueue/vectorQueue.h"
 
 /**
  * Global variables for queues

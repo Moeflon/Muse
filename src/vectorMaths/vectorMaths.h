@@ -9,7 +9,8 @@
 #define VECTOR_MATHS_H_
 
 #include <stdint.h>
-#include <lookupMaths.h>
+
+#include "../lookupMaths/lookupMaths.h"
 
 /**
  * @brief A simple three-dimensional vector

@@ -4,14 +4,13 @@
  * @author Victor-Louis De Gusseme
  */
 
-#include <vectorQueue.h>
-#include <vectorMaths.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <dwenguinoLCD.h>
 
 #include "../imuCommunication/imuCommunication.h"
 #include "../globals.h"
+#include "../vectorMaths/vectorMaths.h"
+
 #include "physicsSampler.h"
 
 volatile dataQueuesPointers g_data_queues_ptrs;
