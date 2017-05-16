@@ -30,10 +30,6 @@ int main(void) {
   for(;;) {
       update_model(&model);
       print_val = model.position_raw;
-      //sub_from_vector(&orientation, &model.accel_ref);
-      //orientation = model.accel_ref;
-      //shr_vector(10, &orientation);
-      //div_vector(10, &orientation);
 
       clearLCD();
       printCharToLCD('X', 0, 0);

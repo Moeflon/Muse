@@ -77,9 +77,9 @@ void vq_remove_peaks(vectorQueue* q, Vector* average, uint16_t treshold) {
       Vector diff = { 0 };
       sub_vectors(&q->queue[i], average, &diff);
       abs_vector(&diff);
-      if(diff.x <= treshold) q->queue[i].x = average->x;
-      if(diff.y <= treshold) q->queue[i].y = average->y;
-      if(diff.z <= treshold) q->queue[i].z = average->z;
+      if(diff.x >= treshold) q->queue[i].x = average->x;
+      if(diff.y >= treshold) q->queue[i].y = average->y;
+      if(diff.z >= treshold) q->queue[i].z = average->z;
     }
   }
 }
