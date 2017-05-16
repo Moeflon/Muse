@@ -57,10 +57,6 @@ void stop_sampler() {
 
 ISR(INT3_vect) {
   imuDataQueues* s = g_data_queues_ptrs.sampling;
-  if(vq_free_space(&s->accel) < 10) {
-    STATE_SET(UPDATE);
-  }
-
   vq_enqueue(imu_get_angular(), &s->gyro);
   vq_enqueue(imu_get_acceleration(), &s->accel);
 }
