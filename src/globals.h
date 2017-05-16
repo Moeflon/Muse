@@ -13,32 +13,12 @@
 #include "vectorQueue/vectorQueue.h"
 
 /**
- * Global variables for queues
+ * @brief Global containing pointers to current data queues
+ * The interrupt routine uses the sampling queue in this struct to add
+ * values to.
+ * Processing will swap the pointers and clear the new processing queue
+ * such that the interrupt can add to a queue whilst the old one is being processed.
  */
 extern volatile dataQueuesPointers g_data_queues_ptrs;
-
-/**
- * Global variables and definitions for application state
- */
-typedef struct state {
-  uint8_t last;
-  uint8_t current;
-} state;
-
-#define STATE_SET(s) do {                                       \
-                          g_state.last = g_state.current;           \
-                          g_state.current = (s);                  \
-                        } while(0)
-
-#define STATE_RETURN() do {                                     \
-                            uint8_t _current = g_state.current;   \
-                            g_state.current = state.last;         \
-                            g_state.last = _current;              \
-                          } while(0)
-
-extern volatile state g_state;
-
-#define MENU 0
-#define UPDATE 1
 
 #endif

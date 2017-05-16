@@ -13,15 +13,15 @@
 #define TRIG_SHIFT 15
 
 /**
- * @brief Returns sin from lookup table, fixed point TRIG_SHIFT_AMOUNT times shifted to left
- * @param angle in degrees*10
+ * @brief Returns cos from lookup table, TRIG_SHIFT_AMOUNT times shifted to left
+ * @param angle angle in degrees*10
  * @return sine multiplied by TRIG_SHIFT_AMOUNT shifted to left
  */
 int16_t lu_sin(int16_t angle);
 
 /**
- * @brief Returns sin from lookup table, TRIG_SHIFT_AMOUNT times shifted to left
- * @param angle in degrees*10
+ * @brief Returns cos from lookup table, TRIG_SHIFT_AMOUNT times shifted to left
+ * @param angle angle in degrees*10
  * @return cosine TRIG_SHIFT_AMOUNT times shifted to left
  */
 int16_t lu_cos(int16_t angle);
@@ -40,10 +40,11 @@ uint8_t lu_sqrt(uint16_t x);
 uint16_t lu_sqrt32(uint32_t x);
 
 /**
-  * @brief lookup version of the well known atan2() functions
-  * @param numerator & denominator of the value you want the know the arctan of
-  * @return a value between -1800 and + 1800, 10 ~ 1 degree
-  */
+ * @brief Lookup version of the well known atan2() functions
+ * @param numerator numerator of value to get arctan of
+ * @param denominator denominator of value to get arctan of
+ * @return a value between -1800 and + 1800, 10 ~ 1 degree
+ */
 int16_t lu_arctan(int16_t numerator, int16_t denominator);
 
 #endif

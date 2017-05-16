@@ -16,7 +16,7 @@
 #define TWI_WRITE 0x00
 
 /**
- * @brief sends a START to I2C device on address
+ * @brief Sends a START to I2C device on address
  * @param address device address appended with mode (READ/WRITE)
  * @retval 0 no error
  * @retval 1 start condition acknowledge fail
@@ -25,12 +25,12 @@
 uint8_t twi_start(uint8_t address);
 
 /**
- * @brief sends a STOP to current I2C device
+ * @brief Sends a STOP to current I2C device
  */
 void twi_stop(void);
 
 /**
- * @brief writes data to current connection
+ * @brief Writes data to current connection
  * @param data to be transmitted
  * @retval 0 no error
  * @retval 1 data acknowledge fail
@@ -38,19 +38,21 @@ void twi_stop(void);
 uint8_t twi_write(uint8_t data);
 
 /**
- * @brief read data with acknowledgement
+ * @brief Read data with acknowledgement
  * @return data
  */
 uint8_t twi_read_ack(void);
 
 /**
- * @brief read data without acknowledgement
+ * @brief Read data without acknowledgement
  * @return data
  */
 uint8_t twi_read_nack(void);
 
 /**
- * @brief read a register
+ * @brief Read a register
+ * @param slav_addr slave address
+ * @param reg_addr slave register address
  * @retval 0 no error
  * @retval 1 start condition acknowledge fail
  * @retval 2 address acknowledge fail
@@ -59,7 +61,10 @@ uint8_t twi_read_nack(void);
 uint8_t twi_read_reg(uint8_t slav_addr, uint8_t reg_add);
 
 /**
- * @brief write a register
+ * @brief Write a register
+ * @param slav_addr slave address
+ * @param reg_addr slave register address
+ * @param data to be transmitted
  * @retval 0 no error
  * @retval 1 start condition acknowledge fail
  * @retval 2 address acknowledge fail

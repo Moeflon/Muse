@@ -11,8 +11,6 @@
 #include "physicsSampler/physicsSampler.h"
 #include "twiProtocol/twiProtocol.h"
 
-volatile state g_state;
-
 int main(void) {
   physicsModel model = { 0 };
   initLCD();

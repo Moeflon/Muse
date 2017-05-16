@@ -10,13 +10,8 @@
 
 #include "../vectorMaths/vectorMaths.h"
 
-/** Allocated size of queue */
-#define VECTOR_QUEUE_MAX_SIZE 64
-#define LG_VECTOR_QUEUE_MAX_SIZE 6
-
-/** Amount of values to average together per new value in averaged queue */
-#define QUEUE_AVERAGING_TRESHOLD 16
-#define QUEUE_AVERAGING_BLOCK_SIZE 4
+#define VECTOR_QUEUE_MAX_SIZE 64 /**> Allocated size of queue */
+#define LG_VECTOR_QUEUE_MAX_SIZE 6 /**> Lg of allocated size of queue */
 
 /**
  * @brief struct containing queue length and array
@@ -28,8 +23,8 @@ typedef struct vectorQueue {
 
 /**
  * @brief Adds vector to end of queue and updates size, discards new value if max size is exceeded
- * @param v vectorpointer of vector to add
- * @param q pointer to vectorqueue to add to
+ * @param v vector pointer of vector to add
+ * @param q pointer to vectorQueue to add to
  * @retval 0 successfully added
  * @retval 1 overflowed
  */
@@ -37,35 +32,35 @@ uint8_t vq_enqueue(Vector v, vectorQueue* q);
 
 /**
  * @brief Returns how much free space there is left in the queue
- * @param q pointer to vectorqueue to read
+ * @param q pointer to vectorQueue to read
  * @return free space
  */
 uint8_t vq_free_space(vectorQueue* q);
 
 /**
- * @brief sets size of vectorqueue to zero
- * @param q vectorqueue to clear
+ * @brief Sets size of vectorQueue to zero
+ * @param q pointer to vectorQueue to clear
  */
 void vq_clear(vectorQueue* q);
 
 /**
  * @brief Averages queue
- * @param queue to average
+ * @param q pointer to vectorQueue to average
  * @return average vector
  */
 Vector vq_average(vectorQueue* q);
 
 /**
  * @brief Calculates the sum of deviations from average
- * @param queue to deviate
+ * @param q pointer to vectorQueue to deviate
  * @param center vector around which to calulate deviation
- * @return deviation
+ * @return absolute sum of deviations
  */
 Vector vq_deviation(vectorQueue* q, Vector* center);
 
 /**
  * @brief Smooths a queue using a moving average
- * @param queue to smoothe
+ * @param q pointer to vectorQueue to smoothe
  */
 void vq_smooth(vectorQueue* q);
 

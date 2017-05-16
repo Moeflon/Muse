@@ -13,7 +13,7 @@
 #include "../lookupMaths/lookupMaths.h"
 
 /**
- * @brief A simple three-dimensional vector
+ * @brief A 16-bit three-dimensional vector
  */
 typedef struct Vector {
   int16_t x; /**> x component */
@@ -118,7 +118,7 @@ typedef struct Vector32 {
 #define vector_norm_squared(v) ((int32_t)(v)->x * (v)->x + (v)->y * (v)->y + (v)->z * (v)->z)
 
 /**
- * @brief transforms measurement so that it will correctly add to euler angles according to current orientation
+ * @brief Transforms measurement to inertial frame of reference
  * @param measured pointer to measurment vector
  * @param orientation pointer to ortientation vector (in degrees)
  */

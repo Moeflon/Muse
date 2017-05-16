@@ -22,22 +22,22 @@
 #include "../vectorQueue/vectorQueue.h"
 
 /**
- * @brief sets up IMU with desired settings
+ * @brief Sets up IMU with desired settings
  */
 void imu_init(void);
 
 /**
- * @brief sets up IMU registers for samping
+ * @brief Sets up IMU registers for samping
  */
 void imu_init_sampling(void);
 
 /**
- * @brief sets up IMU register for sporadic communication
+ * @brief Sets up IMU register for sporadic communication
  */
 void imu_uninit_sampling(void);
 
 /**
- * @brief parses high and low bytes to 16-bit int
+ * @brief Parses high and low bytes to 16-bit int
  * @param high high bits
  * @param low low bits
  * @return 16-bit integer containing acceleration
@@ -45,49 +45,49 @@ void imu_uninit_sampling(void);
 int16_t imu_parse(uint8_t high, uint8_t low);
 
 /**
- * @brief gets the x acceleration
+ * @brief Gets the x acceleration
  * @return x acceleration
  */
 int16_t imu_get_x_acceleration(void);
 
 /**
- * @brief gets the y acceleration
+ * @brief Gets the y acceleration
  * @return y acceleration
  */
 int16_t imu_get_y_acceleration(void);
 
 /**
- * @brief gets the z acceleration
+ * @brief Gets the z acceleration
  * @return z acceleration
  */
 int16_t imu_get_z_acceleration(void);
 
 /**
- * @brief gets the acceleration in all directions
+ * @brief Gets the acceleration in all directions
  * @return acceleration vector
  */
 Vector imu_get_acceleration(void);
 
 /**
- * @brief gets the x angular velocity
+ * @brief Gets the x angular velocity
  * @return x angular velocity
  */
 int16_t imu_get_x_angular(void);
 
 /**
- * @brief gets the y angular velocity
+ * @brief Gets the y angular velocity
  * @return y angular velocity
  */
 int16_t imu_get_y_angular(void);
 
 /**
- * @brief gets the z acceleration
+ * @brief Gets the z acceleration
  * @return z acceleration
  */
 int16_t imu_get_z_angular(void);
 
 /**
- * @brief gets the acceleration in all directions
+ * @brief Gets the acceleration in all directions
  * @return angular velocity vector
  */
 Vector imu_get_angular(void);

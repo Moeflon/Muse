@@ -8,9 +8,9 @@
 #ifndef PHYSICS_MODEL_H_
 #define PHYSICS_MODEL_H_
 
-#include "../vectorMaths/vectorMaths.h"
 #include "../imuCommunication/imuCommunication.h"
 #include "../physicsSampler/physicsSampler.h"
+#include "../vectorMaths/vectorMaths.h"
 
 #define CALIBRATION_ITERATIONS 4
 #define LG_CALIBRATION_ITERATIONS 2
@@ -45,44 +45,42 @@ typedef struct physicsModel {
 } physicsModel;
 
 /**
- * @brief calculates references for accelerometer and gyro measurements while device is stationary on a table
- * @param queues pointer to queues
+ * @brief Calculates references for accelerometer and gyro measurements while device is stationary on a table
  * @param model pointer to model to calibrate
  */
 void calibrate_imu_data(physicsModel* model);
 
 /**
- * @brief normalizes measurement Vector according to reference
- * @param accel pointer to Vector containing measurement
+ * @brief Normalizes measurement vector according to reference
+ * @param accel pointer to vector containing measurement
  * @param
  */
 void normalize_accel(Vector* accel, physicsModel* model);
 
 /**
- * @brief normalizes measurement Vector according to reference
- * @param angular pointer to Vector containing measurement
+ * @brief Normalizes measurement vector according to reference
+ * @param angular pointer to vector containing measurement
  * @param model pointer to model
  */
 void normalize_angular(Vector* angular, physicsModel* model);
 
 /**
- * @brief transforms measurement to inertial frame of reference
- *        and filters out gravity. Zeros components if small enough
- * @param angular pointer to Vector containing measurement
+ * @brief Transforms measurement to inertial frame of reference and filters out gravity
+ * @param angular pointer to vector containing measurement
  * @param model pointer to model
  */
 void correct_accel(Vector* accel, physicsModel* model);
 
 /**
- * @brief sets up queues for processing and updates model parts
+ * @brief Sets up queues for processing and updates model parts
  * @param model pointer to model
  */
 void update_model(physicsModel* model);
 
 /**
- * @brief updates pitch & roll with accelerometer data to eliminate drift
- * @param pointer to an orientation
- * @param Vector pointer to Vector acceleration
+ * @brief Complements orientation with pitch & roll from accelerometer data to eliminate drift
+ * @param orientation pointer to the orientation vector
+ * @param acceleration pointer to acceleration vector
  */
 void complement_orientation(Vector32* orientation, Vector* acceleration);
 
