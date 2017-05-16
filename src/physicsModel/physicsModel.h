@@ -26,7 +26,7 @@
 #define VELOCITY_M_S_SHIFT 12
 
 /* Upper bound for the mean deviation when there is no linear acceleration */
-#define ACCEL_NOISE_DEVIATION 300
+#define ACCEL_NOISE_DEVIATION 50
 
 /**
  * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions

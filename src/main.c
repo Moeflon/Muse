@@ -36,13 +36,13 @@ int main(void) {
 
       clearLCD();
       printCharToLCD('X', 0, 0);
-      printIntToLCD(print_val.x >> 3, 0, 2);
+      printIntToLCD(print_val.x >> 2, 0, 2);
 
       printCharToLCD('Y', 1, 0);
-      printIntToLCD(print_val.y >> 3, 1, 2);
+      printIntToLCD(print_val.y >> 2, 1, 2);
 
       printCharToLCD('Z', 1, 8);
-      printIntToLCD(print_val.z >> 3, 1, 10);
+      printIntToLCD(print_val.z >> 2, 1, 10);
       _delay_ms(100);
   }
 }
