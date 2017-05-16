@@ -16,8 +16,7 @@
 #define LG_CALIBRATION_ITERATIONS 2
 
 #define ACCEL_DETECTION_TRESHOLD1 150 /* Individual component treshold */
-#define ACCEL_DETECTION_TRESHOLD2 600 /* All components at the same time treshold */
-#define ACCEL_NSQ_COMPLEMENTARY_TRESHOLD 8500
+#define ACCEL_DETECTION_TRESHOLD2 300 /* All components at the same time treshold */
 
 #define ANGULAR_DETECTION_TRESHOLD1 40 /* Individual component treshold */
 #define ANGULAR_DETECTION_TRESHOLD2 50 /* All components at the same time treshold */
@@ -29,7 +28,7 @@
 #define VELOCITY_M_S_SHIFT 12
 
 /* Upper bound for the mean deviation when there is no linear acceleration */
-#define ACCEL_NOISE_DEVIATION 250
+#define ACCEL_NOISE_DEVIATION 200
 
 /**
  * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions
