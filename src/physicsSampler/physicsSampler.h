@@ -9,9 +9,9 @@
 #define PHYSICS_SAMPLER_H_
 
 #include <stdint.h>
-#include <vectorQueue.h>
 
 #include "../physicsModel/physicsModel.h"
+#include "../vectorQueue/vectorQueue.h"
 
 /**
  * @brief Queues used for storing and processing sampled data

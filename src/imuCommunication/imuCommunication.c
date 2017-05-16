@@ -4,10 +4,10 @@
  * @author Victor-Louis De Gusseme
  */
 
-#include "imuCommunication.h"
-
 /* Load register and slave address definitions */
 #include "registers.h"
+
+#include "imuCommunication.h"
 
 void imu_init() {
   imu_uninit_sampling();

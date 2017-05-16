@@ -13,7 +13,7 @@
 #ifndef DWENGUINO_LCD_H_
 #define DWENGUINO_LCD_H_
 
-#include "dwenguinoBoard.h"
+#include "../dwenguinoBoard/dwenguinoBoard.h"
 #include <avr/delay.h>
 
 //	Properties

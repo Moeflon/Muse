@@ -4,6 +4,9 @@
  * @author Victor-Louis De Gusseme
  */
 
+#include <math.h>
+#include <stdlib.h>
+
 #include "vectorQueue.h"
 
 uint8_t vq_enqueue(Vector v, vectorQueue* q) {
@@ -54,4 +57,29 @@ Vector vq_deviation(vectorQueue* q, Vector* center) {
   }
 
   return deviation;
+}
+
+void vq_smooth(vectorQueue* q) {
+  if(q->size > 3) {
+    const int end = q->size - 1;
+    const Vector* q_q = q->queue;
+    for(int i = 1; i < end; i++) {
+      q->queue[i].x = ((int32_t)(q_q[i-1].x) + q_q[i].x + q_q[i+1].x)/3;
+      q->queue[i].y = ((int32_t)(q_q[i-1].y) + q_q[i].y + q_q[i+1].y)/3;
+      q->queue[i].z = ((int32_t)(q_q[i-1].z) + q_q[i].z + q_q[i+1].z)/3;
+    }
+  }
+}
+
+void vq_remove_peaks(vectorQueue* q, Vector* average, uint16_t treshold) {
+  if(q->size > 3) {
+    for(int i = 1; i < q->size; i++) {
+      Vector diff = { 0 };
+      sub_vectors(&q->queue[i], average, &diff);
+      abs_vector(&diff);
+      if(diff.x <= treshold) q->queue[i].x = average->x;
+      if(diff.y <= treshold) q->queue[i].y = average->y;
+      if(diff.z <= treshold) q->queue[i].z = average->z;
+    }
+  }
 }

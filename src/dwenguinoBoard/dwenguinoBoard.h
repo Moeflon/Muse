@@ -109,7 +109,7 @@
 #include <avr/delay.h>
 
 #ifndef NO_LCD
-#include "dwenguinoLCD.h"
+#include "../dwenguinoLCD/dwenguinoLCD.h"
 #endif
 
 //	Initialisation routine for the board

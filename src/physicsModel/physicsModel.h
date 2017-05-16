@@ -8,16 +8,19 @@
 #ifndef PHYSICS_MODEL_H_
 #define PHYSICS_MODEL_H_
 
-#include <vectorMaths.h>
+#include "../vectorMaths/vectorMaths.h"
 #include "../imuCommunication/imuCommunication.h"
 #include "../physicsSampler/physicsSampler.h"
 
 #define CALIBRATION_ITERATIONS 4
 #define LG_CALIBRATION_ITERATIONS 2
 
+#define ACCEL_DETECTION_TRESHOLD1 150 /* Individual component treshold */
+#define ACCEL_DETECTION_TRESHOLD2 600 /* All components at the same time treshold */
+#define ACCEL_NSQ_COMPLEMENTARY_TRESHOLD 8500
+
 #define ANGULAR_DETECTION_TRESHOLD1 40 /* Individual component treshold */
 #define ANGULAR_DETECTION_TRESHOLD2 50 /* All components at the same time treshold */
-#define ACCEL_NSQ_COMPLEMENTARY_TRESHOLD 8600
 
 /* amount to shift raw orientation right to get degrees * 10 */
 #define ORIENTATION_DEG_SHIFT 10
@@ -26,7 +29,7 @@
 #define VELOCITY_M_S_SHIFT 12
 
 /* Upper bound for the mean deviation when there is no linear acceleration */
-#define ACCEL_NOISE_DEVIATION 70
+#define ACCEL_NOISE_DEVIATION 250
 
 /**
  * @brief Our physicsModel stores the orientation, position and the reference frames we got from the calibration functions
@@ -34,8 +37,9 @@
 typedef struct physicsModel {
   Vector32 orientation_raw; /**> raw orientation vector */
   Vector orientation_deg; /**> orientation vector in degrees * 10 */
-  Vector32 velocity_raw; /**> position vector */
-  Vector velocity_m_s; /**> orientation vector in m/s * 64 */
+  Vector32 position_raw;  /**> position vector */
+  Vector32 velocity_raw; /**> raw velocity vector */
+  Vector velocity_m_s; /**> velocity vector in m/s * 64 */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */
 } physicsModel;

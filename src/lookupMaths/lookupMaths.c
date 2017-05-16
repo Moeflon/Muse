@@ -5,6 +5,7 @@
  */
 
 #include <avr/pgmspace.h>
+
 #include "lookupMaths.h"
 
 static const int16_t sin_table[901] PROGMEM = {

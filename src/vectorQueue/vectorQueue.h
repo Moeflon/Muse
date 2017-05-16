@@ -8,7 +8,7 @@
 #ifndef VECTOR_QUEUE_H_
 #define VECTOR_QUEUE_H_
 
-#include <vectorMaths.h>
+#include "../vectorMaths/vectorMaths.h"
 
 /** Allocated size of queue */
 #define VECTOR_QUEUE_MAX_SIZE 64
@@ -62,4 +62,18 @@ Vector vq_average(vectorQueue* q);
  * @return deviation
  */
 Vector vq_deviation(vectorQueue* q, Vector* center);
+
+/**
+ * @brief Smooths a queue using a moving average
+ * @param queue to smoothe
+ */
+void vq_smooth(vectorQueue* q);
+
+/**
+ * @brief Removes peaks from queue and replaces them with given value
+ * @param q queue to remove peaks from
+ * @param average the average vector around which peaks are detected and peaks are replaced with
+ * @param treshold treshold value around given average value
+ */
+void vq_remove_peaks(vectorQueue* q, Vector* average, uint16_t treshold);
 #endif

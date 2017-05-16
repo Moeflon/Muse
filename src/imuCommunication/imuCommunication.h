@@ -15,10 +15,11 @@
 #define IMU_SAMPLE_RATE 312 /* sample rate of imu in herz */
 #define IMU_SAMPLE_RATE_DIVIDER 25 /* Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV), GOR is 8kHz in default filtering */
 
-#include <vectorQueue.h>
 #include <stdint.h>
-#include <vectorMaths.h>
-#include <twiProtocol.h>
+
+#include "../twiProtocol/twiProtocol.h"
+#include "../vectorMaths/vectorMaths.h"
+#include "../vectorQueue/vectorQueue.h"
 
 /**
  * @brief sets up IMU with desired settings
