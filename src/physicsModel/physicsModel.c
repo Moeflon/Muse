@@ -187,8 +187,7 @@ void complement_orientation(Vector32* orientation, Vector* acceleration){
   orientation->y = (((orientation->y << complement_shift) - orientation->y) + roll) >> complement_shift;
 }
 
-void zero_model(physicsModel* model) {
-  model->orientation_raw = { 0 };
+void zero_model_accel(physicsModel* model) {
   model->velocity_raw = { 0 };
   model->position_raw = { 0 };
 }

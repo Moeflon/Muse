@@ -87,8 +87,8 @@ void update_model(physicsModel* model);
 void complement_orientation(Vector32* orientation, Vector* acceleration);
 
 /**
- * @brief Zeroes model but keeps references
+ * @brief Zeroes model accel data but keeps references
  * @param model pointer to model to zero
  */
-void zero_model(physicsModel* model);
+void zero_model_accel(physicsModel* model);
 #endif

@@ -37,13 +37,13 @@ uint8_t muse_detect(uint8_t timeout,
 
     if(ret != NULL) {
       stop_sampler();
-      zero_model(model);
+      zero_model_accel(model);
       return ret;
     }
   }
 
   stop_sampler();
-  zero_model(model);
+  zero_model_accel(model);
   return NULL;
 }
 
