@@ -71,16 +71,19 @@ void vq_smooth(vectorQueue* q) {
   }
 }
 
-void vq_remove_peaks(vectorQueue* q, Vector* average, uint16_t treshold) {
+void vq_remove_peaks(vectorQueue* q, Vector* average, int16_t threshold) {
   if(q->size > 3) {
     for(int i = 1; i < q->size; i++) {
       Vector diff = { 0 };
 
       sub_vectors(&q->queue[i], average, &diff);
 
-      if(abs(diff.x) >= treshold) q->queue[i].x -= diff.x;
-      if(abs(diff.y) >= treshold) q->queue[i].y -= diff.y;
-      if(abs(diff.z) >= treshold) q->queue[i].z -= diff.z;
+      if(diff.x >= threshold) q->queue[i].x -= threshold;
+      if(diff.y >= threshold) q->queue[i].y -= threshold;
+      if(diff.z >= threshold) q->queue[i].z -= threshold;
+      if(diff.x <= -1*threshold) q->queue[i].x += threshold;
+      if(diff.y <= -1*threshold) q->queue[i].y += threshold;
+      if(diff.z <= -1*threshold) q->queue[i].z += threshold;
     }
   }
 }

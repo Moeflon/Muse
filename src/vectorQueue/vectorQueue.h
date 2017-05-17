@@ -70,5 +70,5 @@ void vq_smooth(vectorQueue* q);
  * @param average the average vector around which peaks are detected and peaks are replaced with
  * @param treshold treshold value around given average value
  */
-void vq_remove_peaks(vectorQueue* q, Vector* average, uint16_t treshold);
+void vq_remove_peaks(vectorQueue* q, Vector* average, int16_t treshold);
 #endif

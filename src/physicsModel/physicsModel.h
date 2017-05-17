@@ -18,14 +18,17 @@
 #define ACCEL_DETECTION_TRESHOLD1 150 /* Individual component treshold */
 #define ACCEL_DETECTION_TRESHOLD2 300 /* All components at the same time treshold */
 
-#define ANGULAR_DETECTION_TRESHOLD1 40 /* Individual component treshold */
-#define ANGULAR_DETECTION_TRESHOLD2 50 /* All components at the same time treshold */
+#define ANGULAR_DETECTION_TRESHOLD1 50 /* Individual component treshold */
+#define ANGULAR_DETECTION_TRESHOLD2 60 /* All components at the same time treshold */
 
 /* amount to shift raw orientation right to get degrees * 10 */
 #define ORIENTATION_DEG_SHIFT 10
 
 /* amount to shift raw velocity right to get m/s * 64 */
 #define VELOCITY_M_S_SHIFT 12
+
+/* amount to shift raw postion right to ~~~cm */
+#define POSTION_CM_SHIFT 10
 
 /* Upper bound for the mean deviation when there is no linear acceleration */
 #define ACCEL_NOISE_DEVIATION 200
@@ -83,4 +86,9 @@ void update_model(physicsModel* model);
  */
 void complement_orientation(Vector32* orientation, Vector* acceleration);
 
+/**
+ * @brief Zeroes model accel data but keeps references
+ * @param model pointer to model to zero
+ */
+void zero_model_accel(physicsModel* model);
 #endif
