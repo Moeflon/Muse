@@ -29,6 +29,9 @@
 /* amount to shift raw velocity right to get m/s * 64 */
 #define VELOCITY_M_S_SHIFT 12
 
+/* amount to shift raw postion right to ~~~cm */
+#define POSITION_CM_SHIFT 10
+
 /* Upper bound for the mean deviation when there is no linear acceleration */
 #define ACCEL_NOISE_DEVIATION 200
 
@@ -87,4 +90,9 @@ void update_orientation_y(physicsModel* model, Vector* angular);
  */
 void complement_orientation(Vector32* orientation, Vector* acceleration);
 
+/**
+ * @brief Zeroes model accel data but keeps references
+ * @param model pointer to model to zero
+ */
+void zero_model_accel(physicsModel* model);
 #endif
