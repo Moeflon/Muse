@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "imuCommunication/imuCommunication.h"
 #include "physicsModel/physicsModel.h"
+#include "physicsModel/printModel.h"
 #include "physicsSampler/physicsSampler.h"
 #include "twiProtocol/twiProtocol.h"
 
@@ -24,11 +25,10 @@ int main(void) {
   volatile imuDataQueues processing = { 0 };
   start_sampler(&sampling, &processing);
 
-  Vector32 print_val;
   for(;;) {
       update_model(&model);
-      print_val = model.position_raw;
-
+      printModel(&model, 1);
+      /*
       clearLCD();
       printCharToLCD('X', 0, 0);
       printIntToLCD(print_val.x >> 8, 0, 2);
@@ -38,6 +38,7 @@ int main(void) {
 
       printCharToLCD('Z', 1, 8);
       printIntToLCD(print_val.z >> 8, 1, 10);
+      */
       _delay_ms(100);
   }
 }

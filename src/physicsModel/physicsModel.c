@@ -97,10 +97,10 @@ void update_model(physicsModel* model) {
   /* Remove accel peaks using average and deviation */
   Vector accel_avg = vq_average(&q);
   Vector accel_deviation = vq_deviation(&q, &accel_avg);
-  //vq_remove_peaks(&p, &accel_avg, ACCEL_NOISE_DEVIATION);
+  vq_remove_peaks(&p, &accel_avg, ACCEL_NOISE_DEVIATION);
 
   /* Set booleans for no-movement detection */
-  uint16_t accel_noise_devation_total = p.size * ACCEL_NOISE_DEVIATION;
+  int16_t accel_noise_devation_total = p.size * ACCEL_NOISE_DEVIATION;
   uint8_t accel_small_deviation_x = (accel_deviation.x < accel_noise_devation_total) ? 1 : 0;
   uint8_t accel_small_deviation_y = (accel_deviation.y < accel_noise_devation_total) ? 1 : 0;
   uint8_t accel_small_deviation_z = (accel_deviation.z < (accel_noise_devation_total>>1)) ? 1 : 0;
