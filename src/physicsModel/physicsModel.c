@@ -130,14 +130,14 @@ void update_model(physicsModel* model) {
      *************************************************************************/
 
     /* Transform measurement according to last orientation in deg*10 */
-    //euler_transform(&q.queue[i], &model->orientation_deg);
+    euler_transform(&q.queue[i], &model->orientation_deg);
 
     /* Update raw orientation */
     add_to_vector(&model->orientation_raw, &q.queue[i]);
 
     /* Only complement orientation with accel data when linear acceleration is small */
     if(accel_small_deviation) {
-      //complement_orientation(&model->orientation_raw, &p.queue[i]);
+      complement_orientation(&model->orientation_raw, &p.queue[i]);
     }
 
     /* Update deg*10 orientation */
