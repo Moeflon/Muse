@@ -11,8 +11,8 @@ int main(void) {
 
   physicsModel model = muse_init();
 
-  enum sword_motions = { SWORD_RIGHT_SLASH, SWORD_LEFT_SLASH, SWORD_RAISE, SWORD_LOWER,
-    SWOR_ROT_BACK, SWORD_ROT_FORW, SWORD_RETRACT, SWORD_PROTRACT};
+  enum { SWORD_RIGHT_SLASH = 0, SWORD_LEFT_SLASH, SWORD_RAISE, SWORD_LOWER,
+    SWORD_ROT_BACK, SWORD_ROT_FORW, SWORD_RETRACT, SWORD_PROTRACT };
 
   uint8_t detect_sword_moves(museMotion* m) {
     if(m->s.x > 20 && abs(m->s.z) > 20) return SWORD_RIGHT_SLASH;
@@ -25,7 +25,7 @@ int main(void) {
     if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y < -15) return SWORD_RETRACT;
 
     if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y > 15
-       && m.o.y > 500) return SWORD_ROT_FORW;
+       && m->o.y > 500) return SWORD_ROT_FORW;
 
     if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y < -15
        && m->o.y < -600) return SWORD_ROT_BACK;

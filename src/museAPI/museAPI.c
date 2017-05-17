@@ -50,6 +50,13 @@ uint8_t muse_detect(uint8_t timeout,
 void muse_update_motion(physicsModel* model, museMotion* m) {
   update_model(model);
   m->v = model->velocity_m_s;
-  m->s = shr_vector(POSITION_CM_SHIFT, model->position_raw);
+
+  Vector32 s = model->position_raw;
+  shr_vector(POSITION_CM_SHIFT, &s);
+
+  m->s.x = s.x;
+  m->s.y = s.y;
+  m->s.z = s.z;
+  
   m->o = model->orientation_deg;
 }

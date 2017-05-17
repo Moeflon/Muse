@@ -49,13 +49,9 @@ void normalize_angular(Vector* angular, physicsModel* model) {
   sub_from_vector(angular, &model->gyro_ref);
 
   /* Really small angular velocities should be 0 */
-  if(abs(angular->x) < ANGULAR_DETECTION_TRESHOLD1) angular->x = 0;
-  if(abs(angular->y) < ANGULAR_DETECTION_TRESHOLD1) angular->y = 0;
-  if(abs(angular->z) < ANGULAR_DETECTION_TRESHOLD1) angular->x = 0;
-
-  if(abs(angular->x) < ANGULAR_DETECTION_TRESHOLD2
-  && abs(angular->y) < ANGULAR_DETECTION_TRESHOLD2
-  && abs(angular->z) < ANGULAR_DETECTION_TRESHOLD2) {
+  if(abs(angular->x) < ANGULAR_DETECTION_TRESHOLD
+  && abs(angular->y) < ANGULAR_DETECTION_TRESHOLD
+  && abs(angular->z) < ANGULAR_DETECTION_TRESHOLD) {
     clear_vector(angular);
   }
 }
@@ -72,10 +68,23 @@ void correct_accel(Vector* accel, physicsModel* model) {
   /* Remove gravity from z-component */
   accel->z -= (INT16_MAX >> 2);
 
+  if(accel->x > ACCEL_DETECTION_TRESHOLD1) accel->x -= ACCEL_DETECTION_TRESHOLD1;
+  else if(accel->x < -ACCEL_DETECTION_TRESHOLD1) accel->x += ACCEL_DETECTION_TRESHOLD1;
+  else accel->x = 0;
+
+  if(accel->y > ACCEL_DETECTION_TRESHOLD1) accel->y -= ACCEL_DETECTION_TRESHOLD1;
+  else if(accel->y < -ACCEL_DETECTION_TRESHOLD1) accel->y += ACCEL_DETECTION_TRESHOLD1;
+  else accel->y = 0;
+
+  if(accel->z > ACCEL_DETECTION_TRESHOLD1) accel->z -= ACCEL_DETECTION_TRESHOLD1;
+  else if(accel->z < -ACCEL_DETECTION_TRESHOLD1) accel->z += ACCEL_DETECTION_TRESHOLD1;
+  else accel->z = 0;
+
+  /*
   if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD1) accel->x = 0;
   if(abs(accel->y) < ACCEL_DETECTION_TRESHOLD1) accel->y = 0;
   if(abs(accel->z) < ACCEL_DETECTION_TRESHOLD1) accel->z = 0;
-
+  */
   if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD2
   && abs(accel->y) < ACCEL_DETECTION_TRESHOLD2
   && abs(accel->z) < ACCEL_DETECTION_TRESHOLD2) {
@@ -87,7 +96,6 @@ void update_model(physicsModel* model) {
   /* Clear processing queues for use as sampling queues and swap
      such that we seperate processing and sampling queues */
   swap_data_queues();
-
   vectorQueue q = g_data_queues_ptrs.processing->gyro;
   vectorQueue p = g_data_queues_ptrs.processing->accel;
 
@@ -109,14 +117,23 @@ void update_model(physicsModel* model) {
                                 && accel_small_deviation_z;
 
   PORTA = 0;
+  /*
   if(accel_small_deviation_x) PORTA |= 8;
   if(accel_small_deviation_y) PORTA |= 4;
   if(accel_small_deviation_z) PORTA |= 2;
   if(accel_small_deviation) PORTA |= 1;
-
-
+  */
 
   for(int i = 0; i < q.size; i++) {
+
+    /* Check for gimbal lock */
+    if(abs(model->orientation_deg.y) > GIMBAL_LOCK_THRESHOLD){
+      DDRA = 0xFF;
+      PORTA |= 128;
+      update_orientation_y(model, &q.queue[i]);
+      continue;
+    }
+
     /* Crudely normalize measurements for the first time */
     normalize_angular(&q.queue[i], model);
     normalize_accel(&p.queue[i], model);
@@ -124,6 +141,7 @@ void update_model(physicsModel* model) {
     /*************************************************************************
      | ORIENTATION PROCESSING                                                |
      *************************************************************************/
+
     /* Transform measurement according to last orientation in deg*10 */
     euler_transform(&q.queue[i], &model->orientation_deg);
 
@@ -151,16 +169,15 @@ void update_model(physicsModel* model) {
       model->velocity_raw.x = 0;
     }
 
-    if(accel_small_deviation_x) {
+    if(accel_small_deviation_y) {
       p.queue[i].y = 0;
       model->velocity_raw.y = 0;
     }
 
-    if(accel_small_deviation_x) {
+    if(accel_small_deviation_z) {
       p.queue[i].z = 0;
       model->velocity_raw.z = 0;
     }
-
 
     /* Integrate acceleration to get velocity */
     add_to_vector(&model->velocity_raw, &p.queue[i]);
@@ -168,10 +185,15 @@ void update_model(physicsModel* model) {
     /* Update m/s * 64 velocity */
     shr_vectors(VELOCITY_M_S_SHIFT, &model->velocity_raw, &model->velocity_m_s);
     add_to_vector(&model->position_raw, &model->velocity_m_s);
-
-    //model->velocity_m_s = accel_deviation;
-    //div_vectors(q.size, &accel_deviation, &model->velocity_m_s);
   }
+}
+
+void update_orientation_y(physicsModel* model, Vector* angular){
+  Vector angular_only_y;
+  angular_only_y.y = angular->y;
+  add_to_vector(&model->orientation_raw, &angular_only_y);
+  /* Update deg*10 orientation */
+  shr_vectors(ORIENTATION_DEG_SHIFT, &model->orientation_raw, &model->orientation_deg);
 }
 
 void complement_orientation(Vector32* orientation, Vector* acceleration){
@@ -188,6 +210,7 @@ void complement_orientation(Vector32* orientation, Vector* acceleration){
 }
 
 void zero_model_accel(physicsModel* model) {
-  model->velocity_raw = { 0 };
-  model->position_raw = { 0 };
+  Vector32 v = { 0 };
+  model->velocity_raw = v;
+  model->position_raw = v;
 }

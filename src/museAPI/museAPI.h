@@ -8,6 +8,8 @@
 #ifndef MUSE_API_H_
 #define MUSE_API_H_
 
+#include <stddef.h>
+
 #include "../physicsModel/physicsModel.h"
 #include "../vectorMaths/vectorMaths.h"
 
