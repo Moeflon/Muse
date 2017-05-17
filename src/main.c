@@ -1,44 +1,20 @@
-#include <math.h>
-#include <avr/interrupt.h>
-#include <avr/io.h>
-#include <util/twi.h>
 #include <util/delay.h>
 
 #include "dwenguinoLCD/dwenguinoLCD.h"
-#include "globals.h"
-#include "imuCommunication/imuCommunication.h"
-#include "physicsModel/physicsModel.h"
-#include "physicsModel/printModel.h"
-#include "physicsSampler/physicsSampler.h"
-#include "twiProtocol/twiProtocol.h"
+#include "museAPI/museAPI.h"
 
 int main(void) {
-  physicsModel model = { 0 };
   initLCD();
   clearLCD();
   backlightOn();
 
-  imu_init();
-  calibrate_imu_data(&model);
+  physicsModel model = muse_init();
 
-  volatile imuDataQueues sampling = { 0 };
-  volatile imuDataQueues processing = { 0 };
-  start_sampler(&sampling, &processing);
+  uint8_t detect_my_cool_moves(museMotion* m) {
+    if(m->v > 64) { /* holy shitballs 1 m/s that is fast mayne */ return 1; }
+  }
 
   for(;;) {
-      update_model(&model);
-      printModel(&model, 1);
-      /*
-      clearLCD();
-      printCharToLCD('X', 0, 0);
-      printIntToLCD(print_val.x >> 8, 0, 2);
-
-      printCharToLCD('Y', 1, 0);
-      printIntToLCD(print_val.y >> 8, 1, 2);
-
-      printCharToLCD('Z', 1, 8);
-      printIntToLCD(print_val.z >> 8, 1, 10);
-      */
-      _delay_ms(100);
+    uint8_t move = muse_detect(10, &model, detect_my_cool_moves);
   }
 }

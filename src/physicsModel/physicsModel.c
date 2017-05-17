@@ -15,8 +15,8 @@
 #include "physicsModel.h"
 
 void calibrate_imu_data(physicsModel* model) {
-  volatile imuDataQueues one;
-  volatile imuDataQueues two;
+  volatile imuDataQueues one = { 0 };
+  volatile imuDataQueues two = { 0 };
 
   start_sampler(&one, &two);
 
@@ -185,4 +185,10 @@ void complement_orientation(Vector32* orientation, Vector* acceleration){
   uint8_t complement_shift = 4;
   orientation->x = (((orientation->x << complement_shift) - orientation->x) + pitch) >> complement_shift;
   orientation->y = (((orientation->y << complement_shift) - orientation->y) + roll) >> complement_shift;
+}
+
+void zero_model(physicsModel* model) {
+  model->orientation_raw = { 0 };
+  model->velocity_raw = { 0 };
+  model->position_raw = { 0 };
 }
