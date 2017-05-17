@@ -25,10 +25,10 @@ int main(void) {
     if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y < -15) return SWORD_RETRACT;
 
     if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y > 15
-       && m.o.y > 50) return SWORD_ROT_FORW;
+       && m.o.y > 500) return SWORD_ROT_FORW;
 
     if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y < -15
-       && m->o.y < -60) return SWORD_ROT_BACK;
+       && m->o.y < -600) return SWORD_ROT_BACK;
     return NULL;
   }
 
