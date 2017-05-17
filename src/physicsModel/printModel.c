@@ -11,18 +11,31 @@ void printModel(physicsModel* model, uint8_t state){
 void printVector(Vector* v, char s[], uint8_t str_size){
   clearLCD();
   printCharToLCD('X', 0, 0);
-  printIntToLCD(v->x, 0, 2);
+  printIntToLCD((v->x)/10, 0, 2);
 
   printCharToLCD('Y', 1, 0);
-  printIntToLCD(v->y, 1, 2);
+  printIntToLCD((v->y)/10, 1, 2);
 
   printCharToLCD('Z', 1, 8);
-  printIntToLCD(v->z, 1, 10);
+  printIntToLCD((v->z)/10, 1, 10);
 
   for(uint8_t i = 0; i < str_size; i++){
   printCharToLCD(*(s+i), 0, 8+i);
   }
 }
-void printVector32(Vector32* v, uint8_t shift, char s[], uint8_t str_size){
 
+void printVector32(Vector32* v, uint8_t shift, char s[], uint8_t str_size){
+  clearLCD();
+  printCharToLCD('X', 0, 0);
+  printIntToLCD(v->x >> shift, 0, 2);
+
+  printCharToLCD('Y', 1, 0);
+  printIntToLCD(v->y >> shift, 1, 2);
+
+  printCharToLCD('Z', 1, 8);
+  printIntToLCD(v->z >> shift, 1, 10);
+
+  for(uint8_t i = 0; i < str_size; i++){
+  printCharToLCD(*(s+i), 0, 8+i);
+  }
 }

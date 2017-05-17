@@ -28,17 +28,6 @@ int main(void) {
   for(;;) {
       update_model(&model);
       printModel(&model, 1);
-      /*
-      clearLCD();
-      printCharToLCD('X', 0, 0);
-      printIntToLCD(print_val.x >> 8, 0, 2);
-
-      printCharToLCD('Y', 1, 0);
-      printIntToLCD(print_val.y >> 8, 1, 2);
-
-      printCharToLCD('Z', 1, 8);
-      printIntToLCD(print_val.z >> 8, 1, 10);
-      */
-      _delay_ms(100);
+      _delay_ms(100); // simulates API user's code
   }
 }
