@@ -68,10 +68,23 @@ void correct_accel(Vector* accel, physicsModel* model) {
   /* Remove gravity from z-component */
   accel->z -= (INT16_MAX >> 2);
 
+  if(accel->x > ACCEL_DETECTION_TRESHOLD1) accel->x -= ACCEL_DETECTION_TRESHOLD1;
+  else if(accel->x < -ACCEL_DETECTION_TRESHOLD1) accel->x += ACCEL_DETECTION_TRESHOLD1;
+  else accel->x = 0;
+
+  if(accel->y > ACCEL_DETECTION_TRESHOLD1) accel->y -= ACCEL_DETECTION_TRESHOLD1;
+  else if(accel->y < -ACCEL_DETECTION_TRESHOLD1) accel->y += ACCEL_DETECTION_TRESHOLD1;
+  else accel->y = 0;
+
+  if(accel->z > ACCEL_DETECTION_TRESHOLD1) accel->z -= ACCEL_DETECTION_TRESHOLD1;
+  else if(accel->z < -ACCEL_DETECTION_TRESHOLD1) accel->z += ACCEL_DETECTION_TRESHOLD1;
+  else accel->z = 0;
+
+  /*
   if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD1) accel->x = 0;
   if(abs(accel->y) < ACCEL_DETECTION_TRESHOLD1) accel->y = 0;
   if(abs(accel->z) < ACCEL_DETECTION_TRESHOLD1) accel->z = 0;
-
+  */
   if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD2
   && abs(accel->y) < ACCEL_DETECTION_TRESHOLD2
   && abs(accel->z) < ACCEL_DETECTION_TRESHOLD2) {
