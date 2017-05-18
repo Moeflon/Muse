@@ -30,7 +30,7 @@
 #define VELOCITY_M_S_SHIFT 12
 
 /* amount to shift raw postion right to ~~~cm */
-#define POSITION_CM_SHIFT 10
+#define POSITION_CM_SHIFT 8
 
 /* Upper bound for the mean deviation when there is no linear acceleration */
 #define ACCEL_NOISE_DEVIATION 200
@@ -46,6 +46,7 @@ typedef struct physicsModel {
   Vector velocity_m_s; /**> velocity vector in m/s * 64 */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */
+  Vector lin_accel;
 } physicsModel;
 
 /**

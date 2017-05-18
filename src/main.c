@@ -4,56 +4,88 @@
 #include "dwenguinoLCD/dwenguinoLCD.h"
 #include "museAPI/museAPI.h"
 
+enum { ORIENTATION, POSITION, ACCEL };
+uint8_t state = ORIENTATION;
+
 int main(void) {
   initLCD();
   clearLCD();
   backlightOn();
 
+  DDRE &= ~_BV(PINE4);
+  PORTE |= _BV(PINE4);
+
+  EICRB &= ~_BV(ISC40);
+  EICRB |= _BV(ISC41);
+
   physicsModel model = muse_init();
 
-  enum { SWORD_RIGHT_SLASH = 0, SWORD_LEFT_SLASH, SWORD_RAISE, SWORD_LOWER,
-    SWORD_ROT_BACK, SWORD_ROT_FORW, SWORD_RETRACT, SWORD_PROTRACT };
+  uint8_t print_orientation(museMotion* m) {
+    clearLCD();
+    printCharToLCD('X', 0, 0);
+    printIntToLCD(m->o.x, 0, 2);
 
-  uint8_t detect_sword_moves(museMotion* m) {
-    if(m->s.x > 20 && abs(m->s.z) > 20) return SWORD_RIGHT_SLASH;
-    if(m->s.x < 20 && abs(m->s.z) > 20) return SWORD_LEFT_SLASH;
+    printCharToLCD('Y', 1, 0);
+    printIntToLCD(m->o.y, 1, 2);
 
-    if(abs(m->s.x) < 10 && m->s.z > 20) return SWORD_RAISE;
-    if(abs(m->s.x) < 10 && m->s.z < -20) return SWORD_LOWER;
+    printCharToLCD('Z', 1, 8);
+    printIntToLCD(m->o.z, 1, 10);
+    _delay_ms(100);
 
-    if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y > 15) return SWORD_PROTRACT;
-    if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y < -15) return SWORD_RETRACT;
-
-    if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y > 15
-       && m->o.y > 500) return SWORD_ROT_FORW;
-
-    if(abs(m->s.z) < 10 && abs(m->s.x) < 10 && m->s.y < -15
-       && m->o.y < -600) return SWORD_ROT_BACK;
     return NULL;
   }
 
-  uint8_t motion_amt[8]; /* there are 8 types of motions */
+  uint8_t print_position(museMotion* m) {
+    clearLCD();
+    printCharToLCD('X', 0, 0);
+    printIntToLCD(m->s.x, 0, 2);
 
-  /* In this level (actually the only level in this demo)
-     the winning move contains 8 motions */
-  for(int i = 0; i < 8;) {
-    uint8_t move = muse_detect(2, &model, detect_sword_moves);
+    printCharToLCD('Y', 1, 0);
+    printIntToLCD(m->s.y, 1, 2);
 
-    if(move != NULL) {
-      motion_amt[move]++;
-      i++;
-    }
+    printCharToLCD('Z', 1, 8);
+    printIntToLCD(m->s.z, 1, 10);
+    _delay_ms(100);
+
+    return NULL;
   }
 
-  /* 8 moves have been detected, check if they were the right ones */
-  DDRA = 0xFF;
-  if(motion_amt[SWORD_RIGHT_SLASH] >= 2
-     && motion_amt[SWORD_ROT_BACK] >= 1
-     && motion_amt[SWORD_ROT_FORW] >= 1
-     && motion_amt[SWORD_RETRACT] >= 1
-     && motion_amt[SWORD_PROTRACT] >= 1
-     && motion_amt[SWORD_RAISE] >= 1
-     && motion_amt[SWORD_LOWER] >= 1) {
-       PORTA = 0xFF;
-     }
+  uint8_t print_accel(museMotion* m) {
+    clearLCD();
+    printCharToLCD('X', 0, 0);
+    printIntToLCD(model.lin_accel.x, 0, 2);
+
+    printCharToLCD('Y', 1, 0);
+    printIntToLCD(model.lin_accel.y, 1, 2);
+
+    printCharToLCD('Z', 1, 8);
+    printIntToLCD(model.lin_accel.z, 1, 10);
+    _delay_ms(100);
+
+    return NULL;
+  }
+
+  for(;;) {
+    uint8_t (*l)(museMotion* m) = print_orientation;
+    if(state == ORIENTATION) {
+      l = print_orientation;
+    }
+    else if(state == POSITION) {
+      l = print_position;
+    }
+    else if(state == ACCEL) {
+      l = print_accel;
+    }
+
+    muse_detect(200, &model, l);
+  }
+}
+
+ISR(INT4_vect) {
+  if(state == ACCEL) {
+    state = ORIENTATION;
+  }
+  else {
+    state++;
+  }
 }

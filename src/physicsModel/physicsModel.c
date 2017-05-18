@@ -68,6 +68,8 @@ void correct_accel(Vector* accel, physicsModel* model) {
   /* Remove gravity from z-component */
   accel->z -= (INT16_MAX >> 2);
 
+  model->lin_accel = *accel;
+  
   if(accel->x > ACCEL_DETECTION_TRESHOLD1) accel->x -= ACCEL_DETECTION_TRESHOLD1;
   else if(accel->x < -ACCEL_DETECTION_TRESHOLD1) accel->x += ACCEL_DETECTION_TRESHOLD1;
   else accel->x = 0;
@@ -116,20 +118,10 @@ void update_model(physicsModel* model) {
                                 && accel_small_deviation_y
                                 && accel_small_deviation_z;
 
-  PORTA = 0;
-  /*
-  if(accel_small_deviation_x) PORTA |= 8;
-  if(accel_small_deviation_y) PORTA |= 4;
-  if(accel_small_deviation_z) PORTA |= 2;
-  if(accel_small_deviation) PORTA |= 1;
-  */
-
   for(int i = 0; i < q.size; i++) {
 
     /* Check for gimbal lock */
     if(abs(model->orientation_deg.y) > GIMBAL_LOCK_THRESHOLD){
-      DDRA = 0xFF;
-      PORTA |= 128;
       update_orientation_y(model, &q.queue[i]);
       continue;
     }
@@ -141,7 +133,6 @@ void update_model(physicsModel* model) {
     /*************************************************************************
      | ORIENTATION PROCESSING                                                |
      *************************************************************************/
-
     /* Transform measurement according to last orientation in deg*10 */
     euler_transform(&q.queue[i], &model->orientation_deg);
 
@@ -163,7 +154,6 @@ void update_model(physicsModel* model) {
     correct_accel(&p.queue[i], model);
 
     /* If there's no movement in a particular component, round acceleration to zero to remove drift from velocity */
-
     if(accel_small_deviation_x) {
       p.queue[i].x = 0;
       model->velocity_raw.x = 0;
@@ -184,19 +174,22 @@ void update_model(physicsModel* model) {
 
     /* Update m/s * 64 velocity */
     shr_vectors(VELOCITY_M_S_SHIFT, &model->velocity_raw, &model->velocity_m_s);
+
+    /* Integrate shifted velocity to both make the scale more manageable and reduce drift */
     add_to_vector(&model->position_raw, &model->velocity_m_s);
   }
 }
 
-void update_orientation_y(physicsModel* model, Vector* angular){
+void update_orientation_y(physicsModel* model, Vector* angular) {
   Vector angular_only_y;
   angular_only_y.y = angular->y;
   add_to_vector(&model->orientation_raw, &angular_only_y);
+
   /* Update deg*10 orientation */
   shr_vectors(ORIENTATION_DEG_SHIFT, &model->orientation_raw, &model->orientation_deg);
 }
 
-void complement_orientation(Vector32* orientation, Vector* acceleration){
+void complement_orientation(Vector32* orientation, Vector* acceleration) {
   int16_t x = acceleration->x;
   int16_t y = acceleration->y;
   int16_t z = acceleration->z;
