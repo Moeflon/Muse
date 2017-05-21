@@ -22,12 +22,23 @@ typedef struct imuDataQueues {
 } imuDataQueues;
 
 /**
- * @brief Struct around processing and sampling queuepointers for dynamic switching
+ * @brief Struct around processing and sampling queuePointers for dynamic switching
+ * @note These queues are always in memory to avoid memcpy and malloc when returning a sample queue to
+ * a processing function.
  */
 typedef struct dataQueuesPointers {
   imuDataQueues* sampling;
   imuDataQueues* processing;
 } dataQueuesPointers;
+
+/**
+ * @brief Global containing pointers to current data queues
+ * The interrupt routine uses the sampling queue in this struct to add
+ * values to.
+ * Processing will swap the pointers and clear the new processing queue
+ * such that the interrupt can add to a queue whilst the old one is being processed.
+ */
+extern volatile dataQueuesPointers g_data_queues_ptrs;
 
 /**
  * @brief Swaps the sampling and processing dataQueuesPointers

@@ -23,14 +23,23 @@
 
 #define ANGULAR_DETECTION_TRESHOLD 50 /* All components at the same time treshold */
 
+/* amount to shift raw angular right to get deg/s */
+#define ANGULAR_DEG_S_SHIFT 5
+
 /* amount to shift raw orientation right to get degrees * 10 */
 #define ORIENTATION_DEG_SHIFT 10
+
+/* amount to shift raw accel right to get accel in g * 8 */
+#define ACCEL_G_SHIFT 10
 
 /* amount to shift raw velocity right to get m/s * 64 */
 #define VELOCITY_M_S_SHIFT 12
 
 /* amount to shift raw postion right to ~~~cm */
 #define POSITION_CM_SHIFT 8
+
+/* Determines amount of accelerometer data to complement gyro data for orientation */
+#define COMPLEMENT_SHIFT 4
 
 /* Upper bound for the mean deviation when there is no linear acceleration */
 #define ACCEL_NOISE_DEVIATION 200
@@ -46,7 +55,8 @@ typedef struct physicsModel {
   Vector velocity_m_s; /**> velocity vector in m/s * 64 */
   Vector accel_ref; /**> accelerometer reference vector */
   Vector gyro_ref; /**> gyroscope reference vector */
-  Vector lin_accel;
+  Vector accel_g; /**> filtered and transformed acceleration vector in g * 8*/
+  Vector angular_deg_s; /**> transformed angular velocity (euler angle velocity) in deg/s */
 } physicsModel;
 
 /**
@@ -82,7 +92,12 @@ void correct_accel(Vector* accel, physicsModel* model);
  */
 void update_model(physicsModel* model);
 
-void update_orientation_y(physicsModel* model, Vector* angular);
+/**
+ * @brief Only updates the y orientation according to angular when gimbal lock is occuring
+ * @param angular pointer to vector containing measurement
+ * @param model pointer to model
+ */
+void update_orientation_y(Vector* angular, physicsModel* model);
 
 /**
  * @brief Complements orientation with pitch & roll from accelerometer data to eliminate drift

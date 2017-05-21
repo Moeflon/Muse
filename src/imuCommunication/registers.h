@@ -1,3 +1,10 @@
+/**
+ * @file registers.h
+ * @brief Relevant IMU register mappings
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
+ */
+
 #ifndef IMU_REGISTERS_H_
 #define IMU_REGISTERS_H_
 

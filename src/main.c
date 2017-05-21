@@ -1,3 +1,10 @@
+/**
+ * @file main.c
+ * @brief Muse API functions demo
+ * @author Vic Degraeve
+ * @author Victor-Louis De Gusseme
+ */
+
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -12,72 +19,58 @@ int main(void) {
   clearLCD();
   backlightOn();
 
+  /* Set up button interrupt */
   DDRE &= ~_BV(PINE4);
   PORTE |= _BV(PINE4);
-
   EICRB &= ~_BV(ISC40);
   EICRB |= _BV(ISC41);
 
+  /* Initialize Muse */
   physicsModel model = muse_init();
 
-  uint8_t print_orientation(museMotion* m) {
+  uint8_t print_muse_info(museMotion* m) {
     clearLCD();
+
+    Vector pr;
+    char* s;
+    switch(state) {
+      case ORIENTATION:
+        pr = m->o;
+        s = "ORI";
+        break;
+      case POSITION:
+        pr = m->s;
+        s = "POS";
+        break;
+      default:
+      case ACCEL:
+        pr = m->a;
+        s = "ACC";
+        break;
+    }
+
     printCharToLCD('X', 0, 0);
-    printIntToLCD(m->o.x, 0, 2);
+    printIntToLCD(pr.x, 0, 2);
 
     printCharToLCD('Y', 1, 0);
-    printIntToLCD(m->o.y, 1, 2);
+    printIntToLCD(pr.y, 1, 2);
 
     printCharToLCD('Z', 1, 8);
-    printIntToLCD(m->o.z, 1, 10);
-    _delay_ms(100);
+    printIntToLCD(pr.z, 1, 10);
 
-    return NULL;
-  }
+    for(uint8_t i = 0; i < 3; i++) {
+      printCharToLCD(*(s+i), 0, 8 + i);
+    }
 
-  uint8_t print_position(museMotion* m) {
-    clearLCD();
-    printCharToLCD('X', 0, 0);
-    printIntToLCD(m->s.x, 0, 2);
+    _delay_ms(100); /* Don't print too fast */
 
-    printCharToLCD('Y', 1, 0);
-    printIntToLCD(m->s.y, 1, 2);
-
-    printCharToLCD('Z', 1, 8);
-    printIntToLCD(m->s.z, 1, 10);
-    _delay_ms(100);
-
-    return NULL;
-  }
-
-  uint8_t print_accel(museMotion* m) {
-    clearLCD();
-    printCharToLCD('X', 0, 0);
-    printIntToLCD(model.lin_accel.x, 0, 2);
-
-    printCharToLCD('Y', 1, 0);
-    printIntToLCD(model.lin_accel.y, 1, 2);
-
-    printCharToLCD('Z', 1, 8);
-    printIntToLCD(model.lin_accel.z, 1, 10);
-    _delay_ms(100);
-
-    return NULL;
+    return NULL; /* NULL makes the loop continue */
   }
 
   for(;;) {
-    uint8_t (*l)(museMotion* m) = print_orientation;
-    if(state == ORIENTATION) {
-      l = print_orientation;
-    }
-    else if(state == POSITION) {
-      l = print_position;
-    }
-    else if(state == ACCEL) {
-      l = print_accel;
-    }
-
-    muse_detect(200, &model, l);
+    /* Print API information */
+    /* After 200 seconds (timout) position will be set to zero */
+    muse_detect(200, &model, print_muse_info);
   }
 }
 

@@ -1,6 +1,6 @@
 /**
  * @file imuCommunication.h
- * @brief Declares functions that communicate with accelerometer and parse the data into Vectors
+ * @brief Communicate with IMU and parse the data into Vectors
  * @author Vic Degraeve
  * @author Victor-Louis De Gusseme
  */
@@ -9,10 +9,10 @@
 #define IMU_COMMUNICATION_H_
 
 #define GYRO_MODE 2 /* 1000 degrees/s, see datasheet */
-#define GYRO_DEG_S 1000
+#define GYRO_DEG_S 1000 /**> Degrees per second for maximum value */
 #define ACCEL_MODE 1 /* 4g/s, see datasheet */
-#define ACCEL_G_S 4
-#define IMU_SAMPLE_RATE 312 /* sample rate of imu in herz */
+#define ACCEL_G_S 4 /**> G's for maximum value */
+#define IMU_SAMPLE_RATE 312 /* sample rate of IMU in herz */
 #define IMU_SAMPLE_RATE_DIVIDER 25 /* Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV), GOR is 8kHz in default filtering */
 
 #include <stdint.h>

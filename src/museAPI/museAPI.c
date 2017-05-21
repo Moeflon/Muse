@@ -54,9 +54,9 @@ void muse_update_motion(physicsModel* model, museMotion* m) {
   Vector32 s = model->position_raw;
   shr_vector(POSITION_CM_SHIFT, &s);
 
-  m->s.x = s.x;
+  m->s.x = s.x; /* Ugly assign because 32bit vector to 16bit */
   m->s.y = s.y;
   m->s.z = s.z;
-  
+
   m->o = model->orientation_deg;
 }

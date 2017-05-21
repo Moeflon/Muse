@@ -1,6 +1,6 @@
 /**
  * @file lookupMaths.h
- * @brief Trigonomic functions for use in coordinate transformations
+ * @brief Faster mathematics
  * @author Vic Degraeve
  * @author Victor-Louis De Gusseme
  */

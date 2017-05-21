@@ -9,7 +9,6 @@
 #include <string.h>
 #include <util/delay.h>
 
-#include "../globals.h"
 #include "../vectorMaths/vectorMaths.h"
 
 #include "physicsModel.h"
@@ -68,8 +67,7 @@ void correct_accel(Vector* accel, physicsModel* model) {
   /* Remove gravity from z-component */
   accel->z -= (INT16_MAX >> 2);
 
-  model->lin_accel = *accel;
-  
+  /* Bring individual components ACCEL_DETECTION_TRESHOLD1 closer to 0 */
   if(accel->x > ACCEL_DETECTION_TRESHOLD1) accel->x -= ACCEL_DETECTION_TRESHOLD1;
   else if(accel->x < -ACCEL_DETECTION_TRESHOLD1) accel->x += ACCEL_DETECTION_TRESHOLD1;
   else accel->x = 0;
@@ -82,11 +80,6 @@ void correct_accel(Vector* accel, physicsModel* model) {
   else if(accel->z < -ACCEL_DETECTION_TRESHOLD1) accel->z += ACCEL_DETECTION_TRESHOLD1;
   else accel->z = 0;
 
-  /*
-  if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD1) accel->x = 0;
-  if(abs(accel->y) < ACCEL_DETECTION_TRESHOLD1) accel->y = 0;
-  if(abs(accel->z) < ACCEL_DETECTION_TRESHOLD1) accel->z = 0;
-  */
   if(abs(accel->x) < ACCEL_DETECTION_TRESHOLD2
   && abs(accel->y) < ACCEL_DETECTION_TRESHOLD2
   && abs(accel->z) < ACCEL_DETECTION_TRESHOLD2) {
@@ -119,7 +112,6 @@ void update_model(physicsModel* model) {
                                 && accel_small_deviation_z;
 
   for(int i = 0; i < q.size; i++) {
-
     /* Check for gimbal lock */
     if(abs(model->orientation_deg.y) > GIMBAL_LOCK_THRESHOLD){
       update_orientation_y(model, &q.queue[i]);
@@ -144,6 +136,10 @@ void update_model(physicsModel* model) {
       complement_orientation(&model->orientation_raw, &p.queue[i]);
     }
 
+    /* Save angular in model */
+    model->angular_deg_s = q.queue[i];
+    shr_vector(ANGULAR_DEG_S_SHIFT, &model->angular_deg_s);
+
     /* Update deg*10 orientation */
     shr_vectors(ORIENTATION_DEG_SHIFT, &model->orientation_raw, &model->orientation_deg);
 
@@ -152,6 +148,10 @@ void update_model(physicsModel* model) {
      *************************************************************************/
     /* Filter out gravity from accel, and zero if possible */
     correct_accel(&p.queue[i], model);
+
+    /* Save acceleration in model */
+    model->accel_g = p.queue[i];
+    shr_vector(ACCEL_G_SHIFT, &model->accel_g);
 
     /* If there's no movement in a particular component, round acceleration to zero to remove drift from velocity */
     if(accel_small_deviation_x) {
@@ -180,7 +180,7 @@ void update_model(physicsModel* model) {
   }
 }
 
-void update_orientation_y(physicsModel* model, Vector* angular) {
+void update_orientation_y(Vector* angular, physicsModel* model) {
   Vector angular_only_y;
   angular_only_y.y = angular->y;
   add_to_vector(&model->orientation_raw, &angular_only_y);
@@ -197,9 +197,8 @@ void complement_orientation(Vector32* orientation, Vector* acceleration) {
   int32_t pitch = (int32_t)lu_arctan(y, z) << ORIENTATION_DEG_SHIFT;
   int32_t roll = (int32_t)lu_arctan(-x, lu_sqrt32(((uint32_t)y)*y + ((uint32_t)z)*z)) << ORIENTATION_DEG_SHIFT;
 
-  uint8_t complement_shift = 4;
-  orientation->x = (((orientation->x << complement_shift) - orientation->x) + pitch) >> complement_shift;
-  orientation->y = (((orientation->y << complement_shift) - orientation->y) + roll) >> complement_shift;
+  orientation->x = (((orientation->x << COMPLEMENT_SHIFT) - orientation->x) + pitch) >> COMPLEMENT_SHIFT;
+  orientation->y = (((orientation->y << COMPLEMENT_SHIFT) - orientation->y) + roll) >> COMPLEMENT_SHIFT;
 }
 
 void zero_model_accel(physicsModel* model) {

@@ -8,7 +8,6 @@
 #include <avr/interrupt.h>
 
 #include "../imuCommunication/imuCommunication.h"
-#include "../globals.h"
 #include "../vectorMaths/vectorMaths.h"
 
 #include "physicsSampler.h"

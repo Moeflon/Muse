@@ -103,7 +103,7 @@ static const uint16_t squares_table[256] PROGMEM = {
 	61504, 62001, 62500, 63001, 63504, 64009, 64516, 65025
 };
 
-static const int16_t arctan_table_1[1025] PROGMEM = {
+static const uint16_t arctan_table_1[1025] PROGMEM = {
 	0,   1,   2,   3,   4,   5,   6,   7,   8,   10,  11,  12,  13,  14,  15,  16,
 	17,  19,  20,  21,  22,  23,  24,  25,  26,  27,  29,  30,  31,  32,  33,  34,
 	35,  36,  37,  39,  40,  41,  42,  43,  44,  45,  46,  48,  49,  50,  51,  52,
@@ -171,7 +171,7 @@ static const int16_t arctan_table_1[1025] PROGMEM = {
 	634
 };
 
-static const int16_t arctan_table_2[129] PROGMEM = {
+static const uint16_t arctan_table_2[129] PROGMEM = {
 	634, 636, 637, 639, 641, 643, 644, 646, 647, 649, 651, 652, 654, 655, 657, 658,
 	660, 661, 663, 664, 666, 667, 668, 670, 671, 673, 674, 675, 676, 678, 679, 680,
 	681, 683, 684, 685, 686, 687, 689, 690, 691, 692, 693, 694, 695, 696, 698, 699,
@@ -182,7 +182,8 @@ static const int16_t arctan_table_2[129] PROGMEM = {
 	750, 751, 751, 752, 753, 753, 754, 754, 755, 755, 756, 756, 757, 758, 758, 759,
 	759
 };
-static const int16_t arctan_table_3[65] PROGMEM = {
+
+static const uint16_t arctan_table_3[65] PROGMEM = {
 	759, 761, 763, 765, 767, 769, 771, 773, 774, 776, 777, 779, 781, 782, 784, 785,
 	786, 788, 789, 790, 792, 793, 794, 795, 796, 798, 799, 800, 801, 802, 803, 804,
 	805, 806, 807, 808, 809, 809, 810, 811, 812, 813, 814, 814, 815, 816, 817, 817,
@@ -190,18 +191,18 @@ static const int16_t arctan_table_3[65] PROGMEM = {
 	828
 };
 
-static const int16_t arctan_table_4[33] PROGMEM = {
+static const uint16_t arctan_table_4[33] PROGMEM = {
 	805, 809, 814, 817, 821, 824, 827, 830, 832, 835, 837, 839, 841, 843, 844, 846,
 	848, 849, 850, 852, 853, 854, 855, 856, 857, 858, 859, 860, 861, 862, 862, 863,
 	864
 };
 
-static const int16_t arctan_table_5[17] PROGMEM = {
+static const uint16_t arctan_table_5[17] PROGMEM = {
 	864, 866, 868, 869, 871, 872, 873, 875, 876, 877, 877, 878, 879, 880, 880, 881,
 	882
 };
 
-static const int16_t arctan_table_6[9] PROGMEM = {
+static const uint16_t arctan_table_6[9] PROGMEM = {
 	882, 884, 885, 886, 888, 888, 889, 890, 891
 };
 
